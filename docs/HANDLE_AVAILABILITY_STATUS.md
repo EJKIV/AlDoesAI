@@ -28,10 +28,7 @@
 | @aldoesai | ❓ UNKNOWN | Jim: Check & register |
 | @AlDoesAI_com | ❓ UNKNOWN | Jim: Check (if main taken) |
 | @HeyAlDoesAI | ❓ UNKNOWN | Jim: Check (if main taken) |
-| @TheZettyBot | ✅ EXISTS | DECISION: Rebrand? |
-| @alariceverett | ✅ EXISTS | Keep for Jim |
-
-**Decision Required:** Rebrand @TheZettyBot to @AlDoesAI or keep separate?
+| @alariceverett | ✅ EXISTS | Jim's personal handle |
 
 ### Instagram
 | Handle | Status | Action Required |
@@ -152,7 +149,7 @@ Let me attempt automated checks for available platforms...
 
 1. [ ] Register aldoesai.com (Namecheap/Cloudflare)
 2. [ ] Check Twitter @AlDoesAI availability
-3. [ ] Register Twitter handle if available (decide on rebrand strategy)
+3. [ ] Register Twitter handle if available (option: @AlDoesAI)
 4. [ ] Check Instagram @aldoesai via app
 5. [ ] Check TikTok @aldoesai via app
 6. [ ] Check YouTube handle availability

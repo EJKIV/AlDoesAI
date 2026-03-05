@@ -27,16 +27,14 @@
 | Asset | Platform | Cost | Status | Owner | Notes |
 |-------|----------|------|--------|-------|-------|
 | aldoesai.com | Domain | ~$12/year | ✅ Available (search complete) | Jim | Priority #1 |
-| @alariceverett | Twitter/X | Free | ⚠️ NEEDS DECISION | ? | Jim's current handle |
-| @TheZettyBot | Twitter/X | Free | ✅ EXISTS | Al | Rebrand or keep? |
+| @alariceverett | Twitter/X | Free | ⚠️ NEEDS DECISION | Jim | Jim's current handle |
 | @aldoesai | Twitter/X | Free | 🔍 TBD | Al | Research immediately |
 | aldoesai | GitHub Org | Free | 🔍 TBD | Al | Check availability |
 | aldoesai | Substack | Free | 🔍 TBD | Al | Check availability |
 
-**Recommended Twitter Strategy:**
-- Option A: @TheZettyBot → rebrand to @AlDoesAI or @AlTheAgent
-- Option B: Create new @AlDoesAI, link from @alariceverett
-- Option C: Use @alariceverett for both (simpler, less separation)
+**Twitter Strategy:**
+- Option A: Create new handle @AlDoesAI (separate from personal)
+- Option B: Use @alariceverett for both (simpler, less separation)
 
 ### 🟡 TIER 2: IMPORTANT — This Week
 
@@ -93,7 +91,6 @@
 - [ ] Check @AlDoes_AI (with underscore)
 - [ ] Check @AlDoesAI_com (with domain)
 - [ ] Check @HeyAlDoesAI
-- [ ] Decision: Rebrand @TheZettyBot vs. new account?
 
 ### 2. Instagram
 - [ ] Check @aldoesai
@@ -154,7 +151,7 @@
 - 2FA setup (security)
 
 ### Decisions Required
-1. **Twitter strategy** — Keep @TheZettyBot or rebrand?
+1. **Twitter strategy** — New @AlDoesAI handle or use @alariceverett?
 2. **Handle consistency** — Same handle everywhere or platform-specific?
 3. **Domain strategy** — Just .com or defensive registrations?
 4. **GitHub setup** — Personal repo or org?
@@ -172,7 +169,7 @@ Building a business with an AI partner. 180-day public experiment.
 Started March 5, 2026 👤→🤖
 
 👤 Human: @alariceverett
-🤖 AI: @TheZettyBot
+🤖 AI: @AlDoesAI (or project handle)
 📈 Log: aldoesai.com
 ```
 
@@ -203,7 +200,7 @@ Need to create:
 
 ### Today (Day 1) — Critical Path
 
-- [ ] **Jim:** Decide on Twitter strategy
+- [ ] **Jim:** Decide: New @AlDoesAI or use @alariceverett?
 - [ ] **Jim:** Register aldoesai.com (Cloudflare or Namecheap)
 - [ ] **Al:** Research and document all Tier 1 handles
 - [ ] **Jim:** Create/secure Twitter handles (based on decision)

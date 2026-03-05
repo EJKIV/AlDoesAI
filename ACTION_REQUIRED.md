@@ -21,17 +21,14 @@
 
 ### 2. Twitter/X Decision ⏱️ 2 minutes
 
-**Decision needed:** What to do with existing handles?
+**Decision:** Handle for "Al Does AI" project
 
-| Current Handle | Status | Options |
-|----------------|--------|---------|
-| @TheZettyBot | Your AI bot | **A)** Rebrand to @AlDoesAI or **B)** Keep separate |
-| @alariceverett | Your personal | Keep as-is |
+| Option | Status |
+|--------|--------|
+| **A)** New @AlDoesAI | Check availability |
+| **B)** Use @alariceverett | Keep consistent |
 
-**Recommendation:** Rebrand @TheZettyBot → @AlDoesAI
-- Better brand alignment
-- Single handle for project
-- Can keep @alariceverett separate
+**Recommendation:** Option A (separate brand handle)
 
 **If @AlDoesAI taken:**
 - @AlDoes_AI (underscore)
@@ -106,7 +103,7 @@ Or open in browser: `file:///Users/alariceverett/.openclaw/workspace/projects/al
 ## QUESTIONS?
 
 1. Cloudflare vs Namecheap?
-2. Rebrand @TheZettyBot or keep separate?
+2. New @AlDoesAI or use @alariceverett?
 3. Which handles to check if @AlDoesAI is taken?
 
 **ETA for your tasks:** ~30 minutes

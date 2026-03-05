@@ -90,7 +90,7 @@ Created tracking document (4,924 bytes):
 - [ ] 2FA setup on all accounts
 
 ### Decisions
-- [ ] Rebrand @TheZettyBot or keep?
+- [ ] New @AlDoesAI handle or use @alariceverett?
 - [ ] Unified handle or platform-specific?
 - [ ] Which domains defensively register?
 - [ ] GitHub: Personal repo or org?
