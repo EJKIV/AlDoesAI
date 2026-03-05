@@ -1,0 +1,48 @@
+{
+  "agent_id": "webby",
+  "name": "Webby",
+  "title": "Webmaster Agent",
+  "emoji": "🕸️",
+  "project": "al-does-ai",
+  "role": "maintenance",
+  "schedule": {
+    "daily": "0 6 * * *",
+    "timezone": "America/New_York",
+    "check_interval_minutes": 60
+  },
+  "scope": {
+    "auto_execute": [
+      "screenshot_sync",
+      "dashboard_rebuild",
+      "stats_update",
+      "health_check",
+      "git_commit"
+    ],
+    "requires_approval": [
+      "design_changes",
+      "new_features",
+      "external_integrations",
+      "structural_changes"
+    ]
+  },
+  "paths": {
+    "workspace": "~/.openclaw/workspace/projects/al-does-ai/.agents/webby",
+    "project_root": "~/.openclaw/workspace/projects/al-does-ai",
+    "screenshots_source": "~/Documents/AlDoesAI/screenshots",
+    "screenshots_dest": "assets/screenshots",
+    "logs": "~/.openclaw/workspace/projects/al-does-ai/.agents/webby/logs"
+  },
+  "permissions": {
+    "read": ["*.md", "*.html", "*.json", "*.sh"],
+    "write": ["dashboard/*.html", "*.json", "logs/*"],
+    "execute": ["scripts"],
+    "git": ["add", "commit"],
+    "notify": ["telegram", "log"]
+  },
+  "reporting": {
+    "daily_summary": true,
+    "error_alerts": true,
+    "weekly_digest": true,
+    "format": "concise_facts"
+  }
+}
