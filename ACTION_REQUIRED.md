@@ -1,109 +1,105 @@
-# 🚨 ACTION REQUIRED: Digital Real Estate
+# 🚨 ACTION REQUIRED: Complete Digital Real Estate Acquisition
 
-## IMMEDIATE (Today)
+## Mission: Own EVERYTHING
 
-### 1. Register Domain ⏱️ 5 minutes
-
-**Recommendation:** [Cloudflare Registrar](https://dash.cloudflare.com)
-
-| Domain | Price | Link |
-|--------|-------|------|
-| aldoesai.com | $9.15/year | [Register](https://dash.cloudflare.com) |
-
-**Why Cloudflare:**
-- Best price ($9.15 vs $12+ elsewhere)
-- Free WhoisGuard (privacy protection)
-- At-cost pricing (no markup)
-
-**Alternative:** Namecheap ($12/year, also good)
+**Goal:** Secure all "AlDoesAI" handles across the web before anyone else.  
+**Budget:** ~$200 (domains) + $0 (social)  
+**Time:** 60-90 minutes today for critical, 30 days for complete sweep.
 
 ---
 
-### 2. Twitter/X Decision ⏱️ 2 minutes
+## PHASE 1: CRITICAL — DO TODAY (60 minutes)
 
-**Decision:** Handle for "Al Does AI" project
+### 1. Domains ($28/year) ⏱️ 10 minutes
 
-| Option | Status |
-|--------|--------|
-| **A)** New @AlDoesAI | Check availability |
-| **B)** Use @alariceverett | Keep consistent |
+**Register at Cloudflare:**
 
-**Recommendation:** Option A (separate brand handle)
+| Domain | Cost | Status |
+|--------|------|--------|
+| aldoesai.com | $9.15 | ☐ |
+| aldoesai.net | $9.15 | ☐ |
+| aldoesai.org | $9.15 | ☐ |
 
-**If @AlDoesAI taken:**
-- @AlDoes_AI (underscore)
-- @aldoesai (lowercase)
-- @HeyAlDoesAI
+**Link:** https://dash.cloudflare.com
 
----
-
-### 3. Secure Social Handles ⏱️ 15-20 minutes
-
-**Order of priority:**
-
-1. **Twitter:** Check @AlDoesAI, register
-2. **Instagram:** Check @aldoesai, register
-3. **TikTok:** Check @aldoesai, register
-4. **YouTube:** Create channel, claim handle
-
-**Login credentials:** (Use password manager)
-- **Twitter:** [twitter.com](https://twitter.com)
-- **Instagram:** [instagram.com](https://instagram.com) (or app)
-- **TikTok:** [tiktok.com](https://tiktok.com) (or app)
-- **YouTube:** [youtube.com](https://youtube.com)
+**Why all three:** Defensive. .com is primary, .net/.org prevent confusion.
 
 ---
 
-### 4. Create Substack ⏱️ 5 minutes
+### 2. Core Social (Requires phone verification) ⏱️ 30 minutes
 
-**URL:** [substack.com](https://substack.com)
+| Platform | Handle | Link | Status |
+|----------|--------|------|--------|
+| **Twitter/X** | @AlDoesAI | https://twitter.com | ☐ |
+| **Instagram** | @aldoesai | App required | ☐ |
+| **TikTok** | @aldoesai | App required | ☐ |
+| **YouTube** | @AlDoesAI | https://youtube.com | ☐ |
 
-**Publication name:** "Al Does AI"
-**Subdomain:** aldoesai.substack.com
-
-**Content:**
-- Bio: "Every prompt. Every action. Every dollar. Building a business with an AI partner. 180-day public experiment."
-- Logo: Use dashboard assets (create later)
-
----
-
-## WHAT AL CAN DO (Waiting for You)
-
-While you're registering, I will:
-
-- [ ] ⏳ Check GitHub org availability
-- [ ] ⏳ Check Reddit subreddit availability  
-- [ ] ⏳ Prepare profile assets
-- [ ] ⏳ Create placeholder content
-- [ ] ⏳ Build link-in-bio template
+**Process:**
+1. Check if @AlDoesAI is available
+2. If taken, try @AlDoes_AI or @aldoesai
+3. Create account
+4. Add profile basics (we'll polish later)
 
 ---
 
-## COMPLETED TODAY ✅
+### 3. LinkedIn ⏱️ 10 minutes
 
-| Item | Status | Time |
-|------|--------|------|
-| Local dashboard | ✅ Done | 8 min |
-| Digital real estate plan | ✅ Done | 4 min |
-| Handle availability research | ✅ Done | 2 min |
-| **Total Al's work** | **✅ Done** | **14 min** |
+- [ ] Create "Al Does AI" Company Page
+- [ ] Create "Al Does AI" Showcase Page
+
+**Note:** May require ID verification for company pages.
 
 ---
 
-## TO VIEW DASHBOARD
+## PHASE 2: AL DOES (While you register)
 
-```bash
-open ~/.openclaw/workspace/projects/al-does-ai/dashboard/index.html
-```
+I'll handle these (no phone verification needed):
 
-Or open in browser: `file:///Users/alariceverett/.openclaw/workspace/projects/al-does-ai/dashboard/index.html`
+- [ ] GitHub org: aldoesai
+- [ ] Reddit: r/aldoesai
+- [ ] Substack: aldoesai.substack.com
+- [ ] Product Hunt: aldoesai
+- [ ] Dev.to: @aldoesai
+- [ ] Discord: server creation
 
 ---
 
-## QUESTIONS?
+## PHASE 3: REMAINING PLATFORMS (This week)
 
-1. Cloudflare vs Namecheap?
-2. New @AlDoesAI or use @alariceverett?
-3. Which handles to check if @AlDoesAI is taken?
+**See full list:** `docs/COMPREHENSIVE_DIGITAL_REAL_ESTATE.md`
 
-**ETA for your tasks:** ~30 minutes
+Key ones:
+- Facebook (page + @aldoesai)
+- Pinterest
+- Snapchat
+- WhatsApp Business
+- Medium
+- Twitch
+- Indie Hackers
+- Hacker News
+- Telegram
+- All AI platforms (Hugging Face, etc.)
+
+---
+
+## QUESTIONS
+
+1. **All 3 domains or just .com?** (Recommend all 3 for $28)
+2. **Twitter: @AlDoesAI or @aldoesai?** (@AlDoesAI matches brand)
+3. **If handles taken?** Use backup list in comprehensive doc
+
+---
+
+## BUDGET TRACKING
+
+| Item | Cost | Running Total |
+|------|------|---------------|
+| Domains (3) | $28 | $28 |
+| Social handles | $0 | $28 |
+| Professional | $0 | $28 |
+| **Day 1 Total** | **$28** | **$28** |
+
+---
+
+**Status:** Awaiting Phase 1 completion (60 minutes)
