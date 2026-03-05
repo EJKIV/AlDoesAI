@@ -1,0 +1,27 @@
+{
+  "agents": [
+    {
+      "name": "TrendSurfer",
+      "display_name": "🌊 TrendSurfer",
+      "description": "Detect, analyze, and surface trending AI topics from multiple sources to inform content strategy.",
+      "permissions": {
+        "web_search": true,
+        "web_fetch": true,
+        "read": true,
+        "write": true,
+        "edit": false,
+        "exec_curl": true,
+        "message": false
+      },
+      "cron": null,
+      "timeout": "5m",
+      "registry": {
+        "status": "pending",
+        "approved_by": null,
+        "deployed_by": null,
+        "approved_date": null,
+        "deployed_date": null
+      }
+    }
+  ]
+}
