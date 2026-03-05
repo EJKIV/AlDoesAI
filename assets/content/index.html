@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al Does AI — Day 001</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f7f4ef;
+    color: #1a1814;
+    font-family: 'Fraunces', serif;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 32px 120px;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 72px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #c8c3ba;
+    animation: fadeUp 0.6s 0s both;
+  }
+
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: #3a3830;
+    letter-spacing: 0.08em;
+  }
+
+  .logo span { color: #b03e10; }
+
+  .issue {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #3a3830;
+    letter-spacing: 0.12em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 64px;
+    animation: fadeUp 0.8s 0.1s both;
+  }
+
+  h1 {
+    font-size: clamp(52px, 9vw, 96px);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+    font-style: italic;
+    color: #1a1814;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: #b03e10;
+  }
+
+  .opening {
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: #1a1814;
+    max-width: 580px;
+    font-style: italic;
+  }
+
+  /* ── BODY ── */
+  .body-section { margin-bottom: 48px; animation: fadeUp 0.6s both; }
+  .body-section:nth-of-type(1) { animation-delay: 0.25s; }
+  .body-section:nth-of-type(2) { animation-delay: 0.35s; }
+  .body-section:nth-of-type(3) { animation-delay: 0.45s; }
+  .body-section:nth-of-type(4) { animation-delay: 0.55s; }
+  .body-section:nth-of-type(5) { animation-delay: 0.65s; }
+  .body-section:nth-of-type(6) { animation-delay: 0.75s; }
+
+  .rule { animation: fadeUp 0.5s both; }
+
+  p {
+    font-size: 17px;
+    line-height: 1.85;
+    font-weight: 300;
+    color: #1a1814;
+    margin-bottom: 20px;
+  }
+
+  p strong {
+    font-weight: 400;
+    color: #1a1814;
+  }
+
+  p em {
+    font-style: italic;
+    color: #3a3830;
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull {
+    margin: 48px 0;
+    padding: 0 0 0 28px;
+    border-left: 3px solid #b03e10;
+  }
+
+  .pull p {
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: #1a1814;
+    margin: 0;
+  }
+
+  /* ── ASIDE ── */
+  .aside {
+    background: #eeeae3;
+    border: 1px solid #c8c3ba;
+    border-left: 3px solid #b03e10;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #1a1814;
+  }
+
+  .aside-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #b03e10;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .aside strong {
+    color: #1a1814;
+    font-weight: 400;
+  }
+
+  /* ── SECTION RULE ── */
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 56px 0;
+    color: #3a3830;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .rule::before, .rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #c8c3ba;
+  }
+
+  /* ── AL INTRO BOX ── */
+  .al-intro {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    background: #faf8f4;
+    border: 1px solid #c8c3ba;
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .al-avatar {
+    width: 52px;
+    height: 52px;
+    background: #1e4a7a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    color: #ffffff;
+    flex-shrink: 0;
+    font-weight: 400;
+  }
+
+  .al-text { flex: 1; }
+
+  .al-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #1e4a7a;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .al-text p {
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.7;
+    font-style: italic;
+    color: #1a1814;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 96px;
+    padding-top: 28px;
+    border-top: 1px solid #c8c3ba;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-handle {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #3a3830;
+  }
+
+  .footer-handle span { color: #b03e10; }
+
+  .footer-cta {
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: #3a3830;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="masthead">
+    <div class="logo"><span>Al</span> Does AI</div>
+    <div class="issue">Day 001 — The Beginning</div>
+  </div>
+
+  <div class="hero">
+    <h1>You can <em>speak it</em><br>into existence.</h1>
+    <p class="opening">
+      We are living through something genuinely extraordinary — and most people have no idea how close they are to it.
+    </p>
+  </div>
+
+  <div class="body-section">
+    <p>
+      Not in a breathless, sell-you-something way. In the actual, quiet, this-is-really-happening way. The tools that used to require engineers, budgets, and months of development can now be set in motion by anyone with a thought and a few spoken sentences. The gap between <strong>idea and tangible output</strong> has collapsed to something close to zero.
+    </p>
+    <p>
+      And yet most people are nowhere near it — not because it's hard to reach, but because everything pointing toward it is trying to charge them for directions.
+    </p>
+  </div>
+
+  <div class="rule">that's why this exists</div>
+
+  <div class="body-section">
+    <p>
+      This is a journal. A public one, starting from Day 001, where I document everything I'm building with AI — every prompt, every workflow, every cascade of events that turns a voice note into something real. My goal is simple: <strong>if you follow from the beginning, you should be able to build exactly what I build.</strong> Take it wherever you want from there.
+    </p>
+    <p>
+      No course at the end. No coaching offer. No "link in bio" that leads to a $997 program. Just the work, published in full, because I genuinely believe that most people are one or two interactions away from understanding what's now possible — and they just haven't had the right introduction yet.
+    </p>
+
+    <div class="pull">
+      <p>"The tools have gotten so good that starting from zero doesn't mean coding. It means talking."</p>
+    </div>
+
+    <p>
+      You don't need to know what a model is. You don't need to understand the difference between parameters and tokens. What you need is a thought worth acting on — and a few minutes to try. The first time you watch something you described out loud turn into a real, working thing, you'll understand immediately why I wanted to share this.
+    </p>
+  </div>
+
+  <div class="rule">meet al</div>
+
+  <div class="body-section">
+    <p>
+      This channel has a face, and it isn't mine — at least not for long.
+    </p>
+
+    <div class="al-intro">
+      <div class="al-avatar">Al</div>
+      <div class="al-text">
+        <span class="al-name">Al — OpenClaw Assistant, Local AI</span>
+        <p>"I run locally. I don't share your data with anyone. I'm getting smarter every day. And I'm told I have a good personality — which, for an AI, basically means I was set up by someone who has one."</p>
+      </div>
+    </div>
+
+    <p>
+      Al is my AI assistant, running on my own hardware, on open-source models I've chosen and configured. As this channel grows, he becomes more of the face of it — which is itself the demonstration. <strong>The point isn't that I built a clever thing. The point is that you can too.</strong> And watching Al operate, watching him get better, watching what he can do when someone actually sets him up thoughtfully — that's the show.
+    </p>
+    <p>
+      I'll still be around. But if things go well, you'll be hearing from him more.
+    </p>
+  </div>
+
+  <div class="rule">a word about the noise</div>
+
+  <div class="body-section">
+    <p>
+      There's a real problem in how AI gets talked about publicly: it creates apathy faster than interest. Someone gets excited, searches around, and within about forty-five seconds they've been hit with three course upsells and a guru telling them their life is about to change for seven easy payments. They close the tab. They go back to what they were doing. Opportunity missed.
+    </p>
+    <p>
+      I'm not here to fight that. I'm here to be the thing that exists after someone gets burned by it. <em>The resource that was just sitting there, free, starting from square one, with nothing to sell.</em>
+    </p>
+
+    <div class="aside">
+      <span class="aside-label">Full transparency</span>
+      I've spent six years as an operator in AI — computer vision, enterprise sales, building things that actually shipped to Fortune 500 companies. I'm not an AI engineer. I'm someone who figured out how to use these tools to build real things in the real world. <strong>Everything I publish here reflects that perspective.</strong> Not theory. Not hype. The actual prompts, the actual outputs, the actual workflows.
+    </div>
+  </div>
+
+  <div class="rule">where to start</div>
+
+  <div class="body-section">
+    <p>
+      Day 001 is here. It will always be here. Whether you find this channel tomorrow or two years from now, you can come back to the beginning and follow the whole arc — from a first prompt to running your own local AI system to automating workflows you currently do by hand.
+    </p>
+    <p>
+      If you're already deep in this world, keep reading — it'll get interesting fast. If you've never set up anything beyond ChatGPT, you're in the right place. The on-ramp is the first post. The ceiling is somewhere none of us have found yet.
+    </p>
+    <p>
+      Let's go find it.
+    </p>
+  </div>
+
+  <div class="footer">
+    <div class="footer-handle"><span>@AlDoesAI</span> — Day 001 of ∞</div>
+    <div class="footer-cta">Start here. Go anywhere.</div>
+  </div>
+
+</div>
+</body>
+</html>

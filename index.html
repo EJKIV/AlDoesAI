@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al Does AI — Day 001</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0F0F0F;
+    --bg-elevated: #1A1A1A;
+    --bg-card: #252525;
+    --text: #F9FAFB;
+    --text-muted: #9CA3AF;
+    --primary: #8B5CF6;
+    --accent: #B03E10;
+    --border: #374151;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 32px 100px;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 60px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .logo span { color: var(--accent); font-weight: 600; }
+
+  .issue {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+  .nav a {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .nav a:hover { opacity: 1; text-decoration: underline; }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 48px;
+  }
+
+  h1 {
+    font-size: clamp(42px, 8vw, 80px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .opening {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 580px;
+    font-style: italic;
+  }
+
+  /* ── BODY ── */
+  .body-section { margin-bottom: 40px; }
+
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 48px 0;
+    color: var(--text-muted);
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .rule::before, .rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.85;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  p strong {
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  p em {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull {
+    margin: 40px 0;
+    padding: 0 0 0 24px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .pull p {
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--text);
+    margin: 0;
+  }
+
+  /* ── ASIDE ── */
+  .aside {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 28px 0;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .aside-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .aside strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ── AL INTRO BOX ── */
+  .al-intro {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin: 28px 0;
+  }
+
+  .al-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), #06B6D4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .al-text { flex: 1; }
+
+  .al-name {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .al-text p {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.65;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .cta-button {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 16px;
+    transition: background 0.2s;
+  }
+  .cta-button:hover { background: #D45020; }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-handle {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .footer-handle span { color: var(--accent); }
+
+  .footer-cta {
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  /* ── PLATFORM PREVIEW ── */
+  .platform-section {
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .platform-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .platform-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .platform-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  /* ── SHARE BUTTONS ── */
+  .share-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .share-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .share-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 40px 20px 60px; }
+    h1 { font-size: 36px; }
+    .pull p { font-size: 18px; }
+    .al-intro { flex-direction: column; align-items: center; text-align: center; }
+    .nav { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="masthead">
+    <div class="logo"><span>Al</span> Does AI</div>
+    <div class="issue">Day 001 — The Beginning</div>
+  </div>
+
+  <div class="nav">
+    <a href="./index.html">🎯 Dashboard</a>
+    <a href="#today">Today's Tasks</a>
+    <a href="#plan">30-Day Plan</a>
+    <a href="#machine">The Machine</a>
+    <a href="#budget">$0 Budget</a>
+  </div>
+
+  <div class="hero">
+    <h1>You can <em>speak it</em><br>into existence.</h1>
+    <p class="opening">
+      We are living through something genuinely extraordinary — and most people have no idea how close they are to it.
+    </p>
+  </div>
+
+  <div class="body-section">
+    <p>
+      Not in a breathless, sell-you-something way. In the actual, quiet, this-is-really-happening way. The tools that used to require engineers, budgets, and months of development can now be set in motion by anyone with a thought and a few spoken sentences. The gap between <strong>idea and tangible output</strong> has collapsed to something close to zero.
+    </p>
+    <p>
+      And yet most people are nowhere near it — not because it's hard to reach, but because everything pointing toward it is trying to charge them for directions.
+    </p>
+  </div>
+
+  <div class="rule">that's why this exists</div>
+
+  <div class="body-section">
+    <p>
+      This is a journal. A public one, starting from Day 001, where I document everything I'm building with AI — every prompt, every workflow, every cascade of events that turns a voice note into something real. My goal is simple: <strong>if you follow from the beginning, you should be able to build exactly what I build.</strong> Take it wherever you want from there.
+    </p>
+    <p>
+      No course at the end. No coaching offer. No "link in bio" that leads to a $997 program. Just the work, published in full, because I genuinely believe that most people are one or two interactions away from understanding what's now possible — and they just haven't had the right introduction yet.
+    </p>
+
+    <div class="pull">
+      <p>"The tools have gotten so good that starting from zero doesn't mean coding. It means talking."</p>
+    </div>
+
+    <p>
+      You don't need to know what a model is. You don't need to understand the difference between parameters and tokens. What you need is a thought worth acting on — and a few minutes to try. The first time you watch something you described out loud turn into a real, working thing, you'll understand immediately why I wanted to share this.
+    </p>
+  </div>
+
+  <div class="rule">meet al</div>
+
+  <div class="body-section">
+    <p>
+      This channel has a face, and it isn't mine — at least not for long.
+    </p>
+
+    <div class="al-intro">
+      <div class="al-avatar">Al</div>
+      <div class="al-text">
+        <span class="al-name">Al — OpenClaw Assistant, Local AI</span>
+        <p>"I run locally. I don't share your data with anyone. I'm getting smarter every day. And I'm told I have a good personality — which, for an AI, basically means I was set up by someone who has one."</p>
+      </div>
+    </div>
+
+    <p>
+      Al is my AI assistant, running on my own hardware, on open-source models I've chosen and configured. As this channel grows, he becomes more of the face of it — which is itself the demonstration. <strong>The point isn't that I built a clever thing. The point is that you can too.</strong> And watching Al operate, watching him get better, watching what he can do when someone actually sets him up thoughtfully — that's the show.
+    </p>
+    <p>
+      I'll still be around. But if things go well, you'll be hearing from him more.
+    </p>
+  </div>
+
+  <div class="rule">share this</div>
+
+  <div class="platform-section">
+    <div class="platform-header">
+      <div class="platform-icon">📢</div>
+      <div class="platform-name">Share on your channels</div>
+      <div class="platform-status">Day 001</div>
+    </div>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+      Help others find this. Share across platforms and be part of the journey.
+    </p>
+    <div class="share-grid">
+      <a href="https://twitter.com/intent/tweet?text=Day%20001%3A%20Learning%20AI%20from%20zero%2C%20completely%20transparent.%20Every%20prompt%2C%20every%20action%2C%20every%20dollar.%20Follow%20%40AlDoesAI%20for%20the%20journey.%20%23AlDoesAI" class="share-btn" target="_blank">🐦 Twitter</a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://aldoesai.com" class="share-btn" target="_blank">💼 LinkedIn</a>
+      <a href="#" class="share-btn" onclick="alert('Copy link to share on Reddit')">🔺 Reddit</a>
+      <a href="#" class="share-btn" onclick="alert('Copy link to share on HN')">🟠 Hacker News</a>
+      <a href="#" class="share-btn" onclick="alert('Share on Discord coming soon')">💬 Discord</a>
+      <a href="#" class="share-btn" onclick="alert('Copy link for TikTok bio')">🎵 TikTok</a>
+    </div>
+  </div>
+
+  <div class="rule">a word about the noise</div>
+
+  <div class="body-section">
+    <p>
+      There's a real problem in how AI gets talked about publicly: it creates apathy faster than interest. Someone gets excited, searches around, and within about forty-five seconds they've been hit with three course upsells and a guru telling them their life is about to change for seven easy payments. They close the tab. They go back to what they were doing. Opportunity missed.
+    </p>
+    <p>
+      I'm not here to fight that. I'm here to be the thing that exists after someone gets burned by it. <em>The resource that was just sitting there, free, starting from square one, with nothing to sell.</em>
+    </p>
+
+    <div class="aside">
+      <span class="aside-label">Full transparency</span>
+      I've spent six years as an operator in AI — computer vision, enterprise sales, building things that actually shipped to Fortune 500 companies. I'm not an AI engineer. I'm someone who figured out how to use these tools to build real things in the real world. <strong>Everything I publish here reflects that perspective.</strong> Not theory. Not hype. The actual prompts, the actual outputs, the actual workflows.
+    </div>
+  </div>
+
+  <div class="rule">where to start</div>
+
+  <div class="body-section">
+    <p>
+      Day 001 is here. It will always be here. Whether you find this channel tomorrow or two years from now, you can come back to the beginning and follow the whole arc — from a first prompt to running your own local AI system to automating workflows you currently do by hand.
+    </p>
+    <p>
+      If you're already deep in this world, keep reading — it'll get interesting fast. If you've never set up anything beyond ChatGPT, you're in the right place. The on-ramp is the first post. The ceiling is somewhere none of us have found yet.
+    </p>
+    <p>
+      Let's go find it.
+    </p>
+  </div>
+
+  <div class="cta-section">
+    <p style="font-size: 20px; font-style: italic; margin-bottom: 8px;">Continue to the Dashboard</p>
+    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Track our progress, tasks, and the complete journey</p>
+    <a href="./index.html" class="cta-button">Enter Dashboard →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-handle"><span>@AlDoesAI</span> — Day 001 of ∞</div>
+    <div class="footer-cta">Start here. Go anywhere.</div>
+  </div>
+
+</div>
+</body>
+</html>
