@@ -1,0 +1,41 @@
+{
+  "agent_id": "webmaster",
+  "project": "al-does-ai",
+  "version": "1.0",
+  "schedule": {
+    "daily": "0 6 * * *",
+    "timezone": "America/New_York",
+    "enabled": true
+  },
+  "paths": {
+    "project_root": "~/.openclaw/workspace/projects/al-does-ai",
+    "screenshots_source": "~/Documents/AlDoesAI/screenshots",
+    "screenshots_dest": "assets/screenshots",
+    "logs": ".agents/webmaster/logs"
+  },
+  "features": {
+    "auto_sync_screenshots": true,
+    "auto_update_stats": true,
+    "auto_commit": true,
+    "health_check": true,
+    "image_optimization": false,
+    "auto_rebuild_html": false
+  },
+  "thresholds": {
+    "max_screenshot_size_mb": 5,
+    "max_image_width": 1920,
+    "commit_if_changes": true,
+    "notify_on_errors": true
+  },
+  "notifications": {
+    "telegram": {
+      "enabled": false,
+      "bot_token": null,
+      "chat_id": null
+    },
+    "email": {
+      "enabled": false,
+      "address": null
+    }
+  }
+}
