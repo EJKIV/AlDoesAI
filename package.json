@@ -1,0 +1,11 @@
+{
+  "name": "al-does-ai-dashboard",
+  "version": "4.0.0",
+  "description": "Al Does AI Dashboard Build System",
+  "scripts": {
+    "build": "node build-dashboard-v4.js"
+  },
+  "dependencies": {
+    "marked": "^11.2.0"
+  }
+}
