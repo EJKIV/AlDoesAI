@@ -659,6 +659,18 @@
           <p style="margin-top: 16px;"><strong>Next:</strong> Jim records video → Al distributes across platforms</p>
         </div>
       </div>
+
+      <!-- APPROVAL QUEUE -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">⏳ Pending Jim Approval</div>
+        <div id="approval-queue"></div>
+      </div>
+
+      <!-- AGENT DEPLOYMENTS -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">🤖 Agent Deployments Pending</div>
+        <div id="agent-deployments" class="agent-grid"></div>
+      </div>
     </div>
 
     <!-- PLAN TAB -->
@@ -1110,36 +1122,233 @@
       loadDocs();
     });
 
+    // === ALL TASKS: Blend old + new ===
+    const jimTasksAll = [
+      { id: 'domain', title: 'Buy aldoesai.com domain', time: '⏱️ 5 min', output: '💰 $9.15/year · Cloudflare · CRITICAL', priority: 'critical' },
+      { id: 'twitter-handle', title: 'Register Twitter @AlDoesAI', time: '⏱️ 10 min', output: '🚫 BLOCKED: Phone verification required', status: 'blocked', blockedReason: 'Needs phone number' },
+      { id: 'instagram-handle', title: 'Register Instagram @aldoesai', time: '⏱️ 10 min', output: '🚫 BLOCKED: Phone verification required', status: 'blocked', blockedReason: 'Needs phone number' },
+      { id: 'tiktok-handle', title: 'Register TikTok @aldoesai', time: '⏱️ 10 min', output: '🚫 BLOCKED: Phone verification required', status: 'blocked', blockedReason: 'Needs phone number' },
+      { id: 'youtube-channel', title: 'Create YouTube channel', time: '⏱️ 15 min', output: '🟡 READY: Can proceed now', status: 'ready' },
+      { id: 'linkedin-page', title: 'Create LinkedIn page', time: '⏱️ 15 min', output: '🟡 READY: Can proceed now', status: 'ready' },
+      { id: 'github-org', title: 'Create GitHub org "aldoesai"', time: '⏱️ 5 min', output: '🟡 READY: Can proceed now', status: 'ready' },
+      { id: 'twitter-api', title: 'Obtain Twitter API keys (Developer Portal)', time: '⏱️ 20 min', output: '🔑 API access for auto-posting', status: 'ready' },
+      { id: 'linkedin-api', title: 'Obtain LinkedIn API keys', time: '⏱️ 20 min', output: '🔑 API access for auto-posting', status: 'ready' },
+      { id: 'reddit-api', title: 'Obtain Reddit API keys', time: '⏱️ 15 min', output: '🔑 API access for cross-posting', status: 'ready' },
+      { id: 'record-tiktok', title: 'Record TikTok video (Day 001)', time: '⏱️ 15 min', output: '📹 60s video · Script ready', status: 'ready' },
+      { id: 'record-youtube', title: 'Record YouTube trailer (Day 001)', time: '⏱️ 30 min', output: '📹 90s trailer · Script ready', status: 'ready' },
+      { id: 'upload-video', title: 'Upload video content to dashboard', time: '⏱️ 10 min', output: '📁 Assets in /assets/videos/', status: 'ready' },
+      { id: 'review-approve', title: 'Review/approve content', time: '⏱️ 15 min', output: '✅ Approve for posting', status: 'ready' }
+    ];
+    
+    const alTasksAll = [
+      { id: 'dashboard-v6', title: 'Build dashboard V6', time: '⏱️ 30 min', output: '✅ DONE · Current version', done: true },
+      { id: 'homepage', title: 'Create homepage', time: '⏱️ 20 min', output: '✅ DONE · Live at /index.html', done: true },
+      { id: 'twitter-draft', title: 'Draft Twitter thread', time: '⏱️ 15 min', output: '✅ DONE · 10-tweet thread ready', done: true },
+      { id: 'linkedin-draft', title: 'Draft LinkedIn post', time: '⏱️ 15 min', output: '✅ DONE · Long-form post ready', done: true },
+      { id: 'substack-draft', title: 'Draft Substack essay', time: '⏱️ 20 min', output: '✅ DONE · 2,100 words ready', done: true },
+      { id: 'tiktok-script', title: 'Draft TikTok script', time: '⏱️ 15 min', output: '✅ DONE · 60-sec script ready', done: true },
+      { id: 'youtube-script', title: 'Draft YouTube script', time: '⏱️ 20 min', output: '✅ DONE · 90-sec trailer script ready', done: true },
+      { id: 'sync-todo', title: 'Sync content to todo list', time: '⏱️ 10 min', output: '✅ DONE · All tasks in dashboard', done: true },
+      { id: 'post-twitter', title: 'Post approved content to Twitter', time: '⏱️ 5 min', output: '⏳ NEEDS APPROVAL · 10-tweet thread ready', status: 'pending', forApproval: true, contentId: 'twitter-day-001' },
+      { id: 'post-linkedin', title: 'Post approved content to LinkedIn', time: '⏱️ 5 min', output: '⏳ NEEDS APPROVAL · Long-form post ready', status: 'pending', forApproval: true, contentId: 'linkedin-day-001' },
+      { id: 'publish-substack', title: 'Publish approved Substack', time: '⏱️ 10 min', output: '⏳ NEEDS APPROVAL · 2,100-word essay ready', status: 'pending', forApproval: true, contentId: 'substack-day-001' }
+    ];
+
+    // === APPROVAL QUEUE: Content waiting for Jim ===
+    const approvalQueue = [
+      {
+        id: 'twitter-day-001',
+        platform: 'Twitter/X',
+        title: 'Day 001 Launch Thread',
+        preview: '🧵 Day 001: I started something today. Every prompt. Every action. Every dollar. Completely transparent. Starting from zero. This is how I\\'m learning AI — and how you can too. Meet Al: My AI assistant. Runs locally on my hardware. Open-source models. No data sharing...',
+        wordCount: 186,
+        scheduledTime: 'Tomorrow 8:00 AM EST',
+        priority: 'high'
+      },
+      {
+        id: 'linkedin-day-001',
+        platform: 'LinkedIn',
+        title: 'Day 001 — Starting in Public',
+        preview: 'I\\'m starting a public experiment: 180 days. $0 budget. Complete transparency. I\\'m documenting everything I build with AI — every prompt, every workflow, every mistake. Why? Because I believe most people are one or two interactions away from understanding what\\'s possible...',
+        wordCount: 245,
+        scheduledTime: 'Tomorrow 9:00 AM EST',
+        priority: 'high'
+      },
+      {
+        id: 'substack-day-001',
+        platform: 'Substack',
+        title: 'Day 001: You Can Speak It Into Existence',
+        preview: 'I\\'m documenting everything I build with AI for the next 180 days. Every prompt, every workflow, every mistake, every dollar. Starting from $0, completely transparent. If you follow from Day 001, you should be able to build exactly what I build...',
+        wordCount: 2100,
+        scheduledTime: 'Tomorrow 10:00 AM EST',
+        priority: 'high'
+      }
+    ];
+
+    // === AGENT DEPLOYMENTS: Waiting approval ===
+    const agentDeployments = [
+      {
+        id: 'agent-distributor',
+        name: '📤 Distributor',
+        description: 'Cross-posts approved content across all platforms (Twitter, LinkedIn, Substack, TikTok, YouTube). Monitors approval queue and publishes when approved.',
+        tools: ['Twitter API', 'LinkedIn API', 'Substack API', 'Reddit API', 'GitHub CLI'],
+        costPerMonth: '$0-25/mo (depends on API tiers)',
+        estimatedSetupTime: '2 hours',
+        status: 'pending'
+      },
+      {
+        id: 'agent-trendsurfer',
+        name: '🌊 TrendSurfer',
+        description: 'Monitors 8+ research sources daily. Delivers trend digest every morning with 3-5 key findings and 1 content opportunity. Filters by relevance to AI business topics.',
+        tools: ['RSS feeds', 'Reddit API', 'Hacker News API', 'Web search', 'GitHub API'],
+        costPerMonth: '$0/mo (uses free APIs)',
+        estimatedSetupTime: '1 hour',
+        status: 'pending'
+      },
+      {
+        id: 'agent-contentcreator',
+        name: '✍️ ContentCreator',
+        description: 'Generates daily content from templates. Produces Twitter threads, LinkedIn posts, Substack drafts, TikTok scripts. Pulls from trend research.',
+        tools: ['Ollama/local LLMs', 'Content templates', 'Trend digest', 'Image generation'],
+        costPerMonth: '$0/mo (local compute)',
+        estimatedSetupTime: '1 hour',
+        status: 'pending'
+      },
+      {
+        id: 'agent-engagementmonitor',
+        name: '💬 EngagementMonitor',
+        description: 'Tracks all platform engagement. Responds to comments, flags high-priority mentions, reports on follower growth. Escalates to Jim when needed.',
+        tools: ['Twitter API', 'LinkedIn API', 'Reddit API', 'Discord API', 'Email notifications'],
+        costPerMonth: '$0/mo (uses free tiers)',
+        estimatedSetupTime: '1.5 hours',
+        status: 'pending'
+      },
+      {
+        id: 'agent-analytics',
+        name: '📊 AnalyticsSynthesizer',
+        description: 'Collects metrics from all platforms. Generates weekly reports with follower counts, engagement rates, top performing content. Updates dashboard automatically.',
+        tools: ['Twitter Analytics API', 'LinkedIn Analytics', 'Substack Stats', 'Dashboard update API', 'CSV exports'],
+        costPerMonth: '$0/mo (uses platform APIs)',
+        estimatedSetupTime: '1 hour',
+        status: 'pending'
+      }
+    ];
+
+    // === TASK FUNCTIONS ===
+    function getSavedTasks() {
+      const saved = localStorage.getItem('aldoesai_tasks_v7');
+      return saved ? JSON.parse(saved) : {};
+    }
+
+    function saveTask(taskId, completed) {
+      const tasks = getSavedTasks();
+      tasks[taskId] = completed;
+      localStorage.setItem('aldoesai_tasks_v7', JSON.stringify(tasks));
+    }
+
     // Task loading
     function loadTasks() {
-      const jimTasks = [
-        { text: 'Review agent deployment specs', completed: false },
-        { text: 'Approve TrendSurfer for deployment', completed: false },
-        { text: 'Record Day 001 intro video', completed: false }
-      ];
+      const tasks = getSavedTasks();
       
-      const alTasks = [
-        { text: 'Build agent deployment infrastructure', completed: true },
-        { text: 'Create registry.json tracking', completed: true },
-        { text: 'Generate agent config scripts', completed: true },
-        { text: 'Update dashboard with Agents tab', completed: true }
-      ];
+      // Render Jim's tasks
+      const jimCompleted = jimTasksAll.filter(t => tasks[t.id] || t.done).length;
+      const jimEl = document.getElementById('jim-tasks');
+      if (jimEl) {
+        jimEl.innerHTML = `<div class="card-title" style="margin-bottom: 16px;">Jim's Tasks (${jimCompleted}/${jimTasksAll.length})</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${jimTasksAll.map(t => {
+            const isDone = !!tasks[t.id];
+            const isBlocked = t.status === 'blocked';
+            const isCritical = t.priority === 'critical';
+            return `<div class="task-item ${isDone ? 'completed' : ''} ${isBlocked ? 'blocked' : ''} ${isCritical ? 'critical' : ''}">
+              <div class="task-checkbox ${isDone ? 'checked' : ''}">${isDone ? '✓' : ''}</div>
+              <div style="flex:1">
+                <div style="font-weight:600;">${t.title}</div>
+                <div style="color: var(--text-muted); font-size:12px; margin-top:4px; font-family: 'DM Mono', monospace;">${t.time} · ${t.output}</div>
+              </div>
+              <span class="task-owner">Jim</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+      }
       
-      document.getElementById('jim-tasks').innerHTML = jimTasks.map(task => `
-        <div class="task-item ${task.completed ? 'completed' : ''}">
-          <div class="task-checkbox ${task.completed ? 'checked' : ''}">${task.completed ? '✓' : ''}</div>
-          <span style="text-decoration: ${task.completed ? 'line-through' : 'none'}; opacity: ${task.completed ? 0.6 : 1}">${task.text}</span>
-          <span class="task-owner">Jim</span>
+      // Render Al's tasks  
+      const alCompleted = alTasksAll.filter(t => tasks[t.id] || t.done).length;
+      const alEl = document.getElementById('al-tasks');
+      if (alEl) {
+        alEl.innerHTML = `<div class="card-title" style="margin-bottom: 16px;">Al's Tasks (${alCompleted}/${alTasksAll.length})</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${alTasksAll.map(t => {
+            const isDone = !!tasks[t.id] || t.done;
+            const isPending = t.forApproval;
+            return `<div class="task-item ${isDone ? 'completed' : ''} ${isPending ? 'pending-approval' : ''}">
+              <div class="task-checkbox ${isDone ? 'checked' : ''}">${isDone ? '✓' : ''}</div>
+              <div style="flex:1">
+                <div style="font-weight:600;">${t.title}</div>
+                <div style="color: var(--text-muted); font-size:12px; margin-top:4px; font-family: 'DM Mono', monospace;">${t.time} · ${t.output}</div>
+              </div>
+              <span class="task-owner">Al</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+      }
+      
+      renderApprovalQueue();
+      renderAgentDeployments();
+    }
+
+    function renderApprovalQueue() {
+      const queueEl = document.getElementById('approval-queue');
+      if (!queueEl) return;
+      
+      if (approvalQueue.length === 0) {
+        queueEl.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-style: italic;">No content pending approval. All caught up! 🎉</div>';
+        return;
+      }
+      
+      queueEl.innerHTML = approvalQueue.map(item => `
+        <div class="approval-item" data-content-id="${item.id}">
+          <div class="approval-header">
+            <span class="approval-platform">${item.platform}</span>
+            <span class="approval-priority ${item.priority === 'high' ? 'priority-high' : 'priority-normal'}">${item.priority === 'high' ? '🔴 HIGH' : '🟡 NORMAL'}</span>
+          </div>
+          <div class="approval-title">${item.title}</div>
+          <div class="approval-preview">${item.preview}</div>
+          <div class="approval-meta">
+            <span>📝 ${item.wordCount.toLocaleString()} words</span>
+            <span>🕐 ${item.scheduledTime}</span>
+          </div>
         </div>
       `).join('');
+    }
+
+    function renderAgentDeployments() {
+      const agentEl = document.getElementById('agent-deployments');
+      if (!agentEl) return;
       
-      document.getElementById('al-tasks').innerHTML = alTasks.map(task => `
-        <div class="task-item ${task.completed ? 'completed' : ''}">
-          <div class="task-checkbox ${task.completed ? 'checked' : ''}">${task.completed ? '✓' : ''}</div>
-          <span style="text-decoration: ${task.completed ? 'line-through' : 'none'}; opacity: ${task.completed ? 0.6 : 1}">${task.text}</span>
-          <span class="task-owner">Al</span>
+      agentEl.innerHTML = agentDeployments.map(agent => `
+        <div class="agent-card" data-agent-id="${agent.id}">
+          <div class="agent-header">
+            <span class="agent-name">${agent.name}</span>
+            <span class="agent-status status-pending">⏳ Pending</span>
+          </div>
+          <div class="agent-description">${agent.description}</div>
+          <div class="agent-tools"><strong>Tools:</strong> ${agent.tools.join(', ')}</div>
+          <div class="agent-meta">
+            <span>💰 ${agent.costPerMonth}</span>
+            <span>⏱️ ${agent.estimatedSetupTime} setup</span>
+          </div>
+          <div class="agent-actions">
+            <button class="btn-deploy" onclick="deployAgent('${agent.id}')">🚀 Deploy Agent</button>
+          </div>
         </div>
       `).join('');
+    }
+
+    function deployAgent(agentId) {
+      const agent = agentDeployments.find(a => a.id === agentId);
+      if (!agent) return;
+      alert('🚀 ' + agent.name + ' deployment triggered!\\n\\nThis would update openclaw.json and activate the agent.');
     }
 
     // Plan loading
