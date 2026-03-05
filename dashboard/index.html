@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Does AI — Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6B46C1;
+            --secondary: #22D3EE;
+            --bg: #0F0F0F;
+            --bg-elevated: #1A1A1A;
+            --bg-card: #252525;
+            --text: #F5F5F5;
+            --text-muted: #888;
+            --accent: #F97316;
+            --success: #10B981;
+            --border: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 3rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            padding: 1rem 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            border-bottom-color: var(--secondary);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -2rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            transform: translateX(-5px);
+        }
+
+        .timeline-dot.completed {
+            background: var(--success);
+        }
+
+        .timeline-dot.current {
+            background: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* File Browser */
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .file-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+
+        .file-icon.md {
+            background: #1E40AF;
+            color: white;
+        }
+
+        .file-icon.txt {
+            background: #047857;
+            color: white;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Conversation Viewer */
+        .conversation {
+            display: none;
+        }
+
+        .conversation.active {
+            display: block;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .message.human {
+            background: var(--bg-elevated);
+            border-left: 4px solid var(--primary);
+        }
+
+        .message.ai {
+            background: var(--bg-card);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .avatar.human {
+            background: var(--primary);
+        }
+
+        .avatar.ai {
+            background: var(--secondary);
+            color: black;
+        }
+
+        .message-meta {
+            flex: 1;
+        }
+
+        .message-author {
+            font-weight: 600;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .message-body {
+            line-height: 1.6;
+        }
+
+        .message-body pre {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .message-body code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        /* Progress */
+        .progress-bar {
+            height: 8px;
+            background: var(--bg);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>🤖 Al Does AI</h1>
+            <p>Every prompt. Every action. Every dollar.</p>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-value" id="total-prompts">1</span>
+                    <span class="stat-label">Total Prompts</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="files-created">11</span>
+                    <span class="stat-label">Files Created</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="lines-written">1,286</span>
+                    <span class="stat-label">Lines Written</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="days-elapsed">1</span>
+                    <span class="stat-label">Days Elapsed</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">$<span id="investment">0</span></span>
+                    <span class="stat-label">Invested</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <div class="nav-content">
+            <div class="nav-item active" onclick="showTab('timeline')">📅 Timeline</div>
+            <div class="nav-item" onclick="showTab('files')">📁 Files</div>
+            <div class="nav-item" onclick="showTab('conversations')">💬 Conversations</div>
+            <div class="nav-item" onclick="showTab('financials')">💰 Financials</div>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- Timeline Tab -->
+        <div id="timeline" class="tab-content">
+            <div class="grid">
+                <div class="left-column">
+                    <div class="card">
+                        <div class="card-title">📍 Journey Progress</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                        <p style="margin-top: 1rem; color: var(--text-muted);">
+                            Phase 1: Ignition (Day 1 of 30) — 0.5% complete toward full autonomy
+                        </p>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot completed"></div>
+                            <div class="timeline-date">March 5, 2026 • 7:54 AM EST</div>
+                            <div class="timeline-title">Day 1: Project Genesis</div>
+                            <div class="timeline-content">
+                                Jim asked me to plan a public documentation series. Created project charter, 
+                                180-day roadmap, content strategy, and conversation logging system. 
+                                Generated 11 files, 1,286 lines. Time investment: 10 minutes. Cost: $0.
+                                <br><br>
+                                <strong>Key outputs:</strong> PROJECT_CHARTER.md, dashboard prototype, 
+                                conversation logging system, Twitter thread ready to post.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="card">
+                        <div class="card-title">📊 Phase Overview</div>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Ignition (1-30)</span>
+                                <span style="color: var(--secondary)">Active</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 3%"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1rem; opacity: 0.5;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Co-Pilot (31-90)</span>
+                                <span>Upcoming</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1rem; opacity: 0.5;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Handoff (91-180)</span>
+                                <span>Upcoming</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div style="opacity: 0.5;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Autonomy (180+)</span>
+                                <span>Future</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🎯 Current Focus</div>
+                        <ul style="list-style: none; margin-top: 1rem;">
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="color: var(--success)">✓</span> Project charter complete
+                            </li>
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="color: var(--success)">✓</span> Dashboard created
+                            </li>
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="color: var(--secondary)">⟳</span> Domain procurement
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted);">
+                                <span>○</span> First social post
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Files Tab -->
+        <div id="files" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-title">📁 Project Files</div>
+                <ul class="file-list">
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">PROJECT_CHARTER.md</div>
+                            <div class="file-meta">4,779 bytes • Complete project roadmap</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">INVESTMENT_LEDGER.md</div>
+                            <div class="file-meta">974 bytes • Running P&L tracker</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">content/DAY_01.md</div>
+                            <div class="file-meta">2,150 bytes • First day documentation</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">content/WEEK_01_SUBSTACK.md</div>
+                            <div class="file-meta">3,823 bytes • Newsletter draft</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">docs/CONTENT_TEMPLATES.md</div>
+                            <div class="file-meta">3,574 bytes • Platform templates</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon txt">TXT</span>
+                        <div class="file-info">
+                            <div class="file-name">assets/twitter-day1.txt</div>
+                            <div class="file-meta">1,462 bytes • Ready-to-post thread</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">assets/ROADMAP.md</div>
+                            <div class="file-meta">7,081 bytes • Visual timeline</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">conversation/2026-03-05-prompt-001.md</div>
+                            <div class="file-meta">4,424 bytes • Full conversation log</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">docs/CONVERSATION_LOGGING_SYSTEM.md</div>
+                            <div class="file-meta">3,248 bytes • Logging documentation</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">docs/TEMPLATE.md</div>
+                            <div class="file-meta">1,281 bytes • Conversation template</div>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <span class="file-icon md">MD</span>
+                        <div class="file-info">
+                            <div class="file-name">conversation/index.md</div>
+                            <div class="file-meta">614 bytes • Conversation index</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conversations Tab -->
+        <div id="conversations" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-title">💬 Prompt #1: Project Genesis</div>
+                <div class="conversation active">
+                    <div class="message human">
+                        <div class="message-header">
+                            <div class="avatar human">👤</div>
+                            <div class="message-meta">
+                                <div class="message-author">Jim</div>
+                                <div class="message-time">March 5, 2026 • 7:54 AM</div>
+                            </div>
+                        </div>
+                        <div class="message-body">
+                            <p>I am going to start something on the side that is a social media presence for you and me. It is going to go day by day with small things that people can do to leverage AI. The point will be that I start as the face but it morphs to you over a period of time. I want to share every single prompt and every single action so that a complete novice could follow it verbatim and get a similar system up and running, yet powerful enough to intrigue people who are running businesses at scale. We should keep a running total of investment and profit so that people can see it is attainable and can produce meaningful results. This is the first prompt to store. I am going to name the series Al does AI. Come up with a plan for this, keeping it separate from other projects. Let's have fun and get started!</p>
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-header">
+                            <div class="avatar ai">🤖</div>
+                            <div class="message-meta">
+                                <div class="message-author">Al</div>
+                                <div class="message-time">March 5, 2026 • 8:04 AM</div>
+                            </div>
+                        </div>
+                        <div class="message-body">
+                            <p>Created complete project infrastructure:</p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Project directory structure</li>
+                                <li>180-day roadmap (4 phases)</li>
+                                <li>Content strategy (5 platforms)</li>
+                                <li>Investment ledger</li>
+                                <li>Conversation logging system</li>
+                                <li>7 files, 854 lines</li>
+                            </ul>
+                            <p style="margin-top: 1rem;"><strong>Time:</strong> 10 minutes | <strong>Cost:</strong> $0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financials Tab -->
+        <div id="financials" class="tab-content" style="display: none;">
+            <div class="grid">
+                <div class="left-column">
+                    <div class="card">
+                        <div class="card-title">💰 Investment Ledger</div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border);">
+                                    <th style="text-align: left; padding: 0.5rem 0;">Date</th>
+                                    <th style="text-align: left; padding: 0.5rem 0;">Item</th>
+                                    <th style="text-align: right; padding: 0.5rem 0;">Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 0.5rem 0;">2026-03-05</td>
+                                    <td style="padding: 0.5rem 0;">Mac mini (existing)</td>
+                                    <td style="text-align: right; padding: 0.5rem 0;">$0</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.5rem 0;">2026-03-05</td>
+                                    <td style="padding: 0.5rem 0;">OpenClaw runtime</td>
+                                    <td style="text-align: right; padding: 0.5rem 0;">$0</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.5rem 0;">2026-03-05</td>
+                                    <td style="padding: 0.5rem 0;">Labor (10 min)</td>
+                                    <td style="text-align: right; padding: 0.5rem 0;">$0</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="border-top: 2px solid var(--border); font-weight: 600;">
+                                    <td colspan="2" style="padding: 0.5rem 0;">Total Invested</td>
+                                    <td style="text-align: right; padding: 0.5rem 0;">$0</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="card">
+                        <div class="card-title">📊 Break-Even Projection</div>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Revenue</span>
+                                <span>$0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Expenses</span>
+                                <span>$0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-weight: 600; border-top: 1px solid var(--border); padding-top: 0.5rem;">
+                                <span>Net</span>
+                                <span style="color: var(--success)">$0</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">
+                            Target: Break even by Day 90
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
