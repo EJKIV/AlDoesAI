@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "al-does-ai",
+  "routes": [
+    { "src": "/dashboard/(.*)", "dest": "/dashboard/$1" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "installCommand": null,
+  "framework": null,
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  }
+}
