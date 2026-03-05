@@ -4,7 +4,10 @@ node_modules/
 *.log
 .env.local
 .env
-.env.*
+.env.development
+.env.production
+.env.test
+!*.template
 *.key
 *.pem
 config/secrets.json
