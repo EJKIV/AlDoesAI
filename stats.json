@@ -1,0 +1,6 @@
+{
+  "prompts": 3,
+  "files": $(find . -type f | wc -l),
+  "lines": $(wc -l */*.md | tail -1),
+  "lastUpdated": "2026-03-05T14:24:57Z"
+}
