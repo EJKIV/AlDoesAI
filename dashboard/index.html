@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Al Does AI — Dashboard V4</title>
+  <title>Al Does AI — Dashboard V5</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --primary: #8B5CF6; --secondary: #06B6D4; --accent: #F59E0B;
-      --success: #10B981; --danger: #EF4444; --bg: #0F0F0F;
-      --bg-elevated: #1A1A1A; --bg-card: #252525; --text: #F9FAFB;
-      --text-muted: #9CA3AF; --border: #374151;
+      --success: #10B981; --bg: #0F0F0F; --bg-elevated: #1A1A1A;
+      --bg-card: #252525; --text: #F9FAFB; --text-muted: #9CA3AF;
+      --border: #374151;
     }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
            background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -22,7 +22,7 @@
     .stat-label { font-size: 0.85rem; text-transform: uppercase; opacity: 0.8; }
     .nav { background: var(--bg-elevated); border-bottom: 1px solid var(--border);
            padding: 0 2rem; position: sticky; top: 0; z-index: 99; }
-    .nav-content { max-width: 1400px; margin: 0 auto; display: flex; gap: 2rem; flex-wrap: wrap; }
+    .nav-content { max-width: 1400px; margin: 0 auto; display: flex; gap: 1.5rem; flex-wrap: wrap; }
     .nav-item { padding: 1rem 0; border-bottom: 2px solid transparent; cursor: pointer;
                 opacity: 0.6; transition: all 0.2s; white-space: nowrap; }
     .nav-item:hover, .nav-item.active { opacity: 1; border-bottom-color: var(--secondary); }
@@ -33,15 +33,29 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     
+    /* Today tab specific */
+    .today-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+                      padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+    .today-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .today-subtitle { font-size: 1rem; opacity: 0.9; }
+    .today-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 900px) { .today-grid { grid-template-columns: 1fr; } }
+    
     /* Tasks */
     .task-item { display: flex; gap: 1rem; padding: 1rem; background: var(--bg-elevated);
                  border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid var(--accent); }
     .task-item.completed { border-color: var(--success); opacity: 0.6; }
+    .task-item.jim { border-left-color: var(--secondary); }
+    .task-item.al { border-left-color: var(--primary); }
     .task-checkbox { width: 24px; height: 24px; border: 2px solid var(--accent); border-radius: 4px;
                     cursor: pointer; display: flex; align-items: center; justify-content: center;
                     flex-shrink: 0; }
     .task-checkbox.checked { background: var(--success); border-color: var(--success); }
     .task-checkbox.checked::after { content: '✓'; color: white; font-weight: bold; }
+    .task-owner { font-size: 0.75rem; text-transform: uppercase; padding: 0.25rem 0.5rem;
+                  border-radius: 4px; margin-left: auto; }
+    .task-owner.jim { background: rgba(6, 182, 212, 0.2); color: var(--secondary); }
+    .task-owner.al { background: rgba(139, 92, 246, 0.2); color: var(--primary); }
     
     /* Screenshots */
     .screenshot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
@@ -56,14 +70,6 @@
     .stat-card { background: var(--bg); padding: 1.5rem; border-radius: 8px; flex: 1; min-width: 200px;
                 border: 1px solid var(--border); }
     .stat-card .stat-value { font-size: 1.5rem; color: var(--text); margin-top: 0.5rem; }
-    .stat-card .stat-label { font-size: 0.85rem; color: var(--text-muted); }
-    .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-    .data-table th, .data-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
-    .data-table th { background: var(--bg); font-weight: 500; }
-    .timeline-container { margin-top: 1.5rem; }
-    .timeline-bar { height: 12px; background: var(--bg); border-radius: 6px; overflow: hidden; }
-    .timeline-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; }
-    .timeline-labels { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
     
     /* Content display */
     .content-display { max-height: 800px; overflow-y: auto; padding-right: 1rem; }
@@ -71,26 +77,12 @@
     .content-display h2 { color: var(--primary); margin: 1.5rem 0 0.75rem; font-size: 1.4rem; }
     .content-display h3 { color: var(--accent); margin: 1rem 0 0.5rem; font-size: 1.1rem; }
     .content-display p { margin-bottom: 1rem; line-height: 1.7; }
-    .content-display ul, .content-display ol { margin: 1rem 0 1rem 2rem; }
-    .content-display li { margin-bottom: 0.5rem; }
-    .content-display code { background: var(--bg-elevated); padding: 0.2rem 0.4rem; border-radius: 3px; font-size: 0.9em; font-family: monospace; }
-    .content-display pre { background: var(--bg); padding: 1rem; border-radius: 6px;
-                           overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); }
-    .content-display pre code { background: transparent; padding: 0; }
     .content-display table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
     .content-display th, .content-display td { padding: 0.75rem; text-align: left;
                                               border-bottom: 1px solid var(--border); }
     .content-display th { background: var(--bg-elevated); font-weight: 500; }
-    .content-display tr:hover { background: var(--bg-elevated); }
+    .content-display tr:hover { background: rgba(255,255,255,0.05); }
     .content-display strong { color: var(--text); }
-    .content-display a { color: var(--secondary); text-decoration: none; }
-    .content-display a:hover { text-decoration: underline; }
-    
-    /* Progress bar */
-    .progress-container { margin-top: 2rem; }
-    .progress-text { font-size: 1rem; margin-bottom: 0.5rem; }
-    .progress-bar { height: 12px; background: var(--bg); border-radius: 6px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s; }
     
     /* Document tabs */
     .doc-nav { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -101,13 +93,23 @@
     .doc-content { display: none; }
     .doc-content.active { display: block; }
     
-    @media (max-width: 768px) {
-      .nav-content { gap: 1rem; }
-      .nav-item { font-size: 0.9rem; }
-      .stats-bar { gap: 2rem; }
-      .screenshot-grid { grid-template-columns: 1fr; }
-      .stats-row { flex-direction: column; }
-    }
+    /* Week sections */
+    .week-section { margin-bottom: 1.5rem; }
+    .week-header { background: var(--bg-elevated); padding: 1rem; border-radius: 8px;
+                   cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .week-content { display: none; padding: 1rem; border: 1px solid var(--border);
+                    border-top: none; border-radius: 0 0 8px 8px; }
+    .week-content.expanded { display: block; }
+    
+    /* Machine flow */
+    .machine-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    @media (max-width: 900px) { .machine-grid { grid-template-columns: 1fr; } }
+    
+    /* Progress */
+    .progress-container { margin-top: 2rem; }
+    .progress-bar { height: 12px; background: var(--bg); border-radius: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s; }
+  
   </style>
 </head>
 <body>
@@ -117,9 +119,9 @@
       <p>Every prompt. Every action. Every dollar.</p>
       <div class="stats-bar">
         <div class="stat"><span class="stat-value">5</span><span class="stat-label">Prompts</span></div>
-        <div class="stat"><span class="stat-value">28</span><span class="stat-label">Files</span></div>
-        <div class="stat"><span class="stat-value">4K+</span><span class="stat-label">Lines</span></div>
-        <div class="stat"><span class="stat-value">10</span><span class="stat-label">Screenshots</span></div>
+        <div class="stat"><span class="stat-value">33</span><span class="stat-label">Files</span></div>
+        <div class="stat"><span class="stat-value">5K+</span><span class="stat-label">Lines</span></div>
+        <div class="stat"><span class="stat-value">20</span><span class="stat-label">Screenshots</span></div>
         <div class="stat"><span class="stat-value" style="color: var(--accent);">$0</span><span class="stat-label">Invested</span></div>
       </div>
     </div>
@@ -127,9 +129,10 @@
 
   <nav class="nav">
     <div class="nav-content">
-      <div class="nav-item" onclick="showTab('actions')">🚨 Actions</div>
+      <div class="nav-item active" onclick="showTab('today')">🎯 Today</div>
+      <div class="nav-item" onclick="showTab('plan')">📅 30-Day Plan</div>
+      <div class="nav-item" onclick="showTab('machine')">🔄 Machine</div>
       <div class="nav-item" onclick="showTab('budget')">💰 Budget</div>
-      <div class="nav-item" onclick="showTab('plan')">📅 The Plan</div>
       <div class="nav-item" onclick="showTab('screenshots')">📸 Screenshots</div>
       <div class="nav-item" onclick="showTab('conversations')">💬 Conversations</div>
       <div class="nav-item" onclick="showTab('docs')">📄 Documents</div>
@@ -137,42 +140,1723 @@
   </nav>
 
   <main class="main">
-    <!-- Actions Tab -->
-    <div id="actions" class="tab-content">
-      <div class="card">
-        <div class="card-title">🚨 Phase 1 Tasks — Digital Real Estate</div>
-        <div id="task-list"></div>
-        <div class="progress-container">
-          <div class="progress-text">Your Progress: <span id="progress-text">0/6</span></div>
-          <div class="progress-bar"><div class="progress-fill" id="progress-bar" style="width: 0%;"></div></div>
+    <!-- TODAY TAB -->
+    <div id="today" class="tab-content active">
+      <div class="today-header">
+        <div class="today-title">🎯 TODAY — Day 1</div>
+        <div class="today-subtitle">Thursday, March 5, 2026 | Phase: Ignition | Week 1: Foundation</div>
+      </div>
+      
+      <div class="today-grid">
+        <div class="card">
+          <div class="card-title">👤 Jim's Tasks</div>
+          <div id="jim-tasks">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">🤖 Al's Tasks</div>
+          <div id="al-tasks">
+            <!-- Populated by JS -->
+          </div>
         </div>
       </div>
       
       <div class="card">
-        <div class="card-title">📋 ACTION REQUIRED — Immediate Tasks</div>
+        <div class="card-title">📝 Content Today</div>
         <div class="content-display">
-          <h2>Today (2026-03-05)</h2>
-          <ol>
-            <li><strong>Buy aldoesai.com domain</strong> — Cloudflare Registrar ($9.15)</li>
-            <li><strong>Register @AlDoesAI everywhere</strong>:
-              <ul>
-                <li>Twitter/X — @AlDoesAI</li>
-                <li>Instagram — @aldoesai</li>
-                <li>TikTok — @aldoesai</li>
-                <li>YouTube — "Al Does AI" channel</li>
-                <li>LinkedIn — "Al Does AI" page</li>
-                <li>GitHub — aldoesai org</li>
-              </ul>
-            </li>
-            <li><strong>Create Substack</strong> — "Al Does AI" newsletter</li>
-            <li><strong>Run showmeal</strong> — View and test dashboard</li>
-          </ol>
-          <p><em>Total time: ~1 hour | Total cost: $28</em></p>
+          <p><strong>Status:</strong> Waiting for Jim's Day 1 thoughts</p>
+          <p><strong>Planned content:</strong></p>
+          <ul>
+            <li>🐦 <strong>Twitter:</strong> "Day 1: $0 Setup" thread</li>
+            <li>💼 <strong>LinkedIn:</strong> Vision post — AI x human collaboration</li>
+            <li>🎬 <strong>TikTok:</strong> Behind-the-scenes of setup</li>
+            <li>📧 <strong>Substack:</strong> Week 1 preview (draft)</li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <!-- Budget Tab -->
+    <!-- 30-DAY PLAN TAB -->
+    <div id="plan" class="tab-content">
+      <div class="card">
+        <div class="card-title">📅 30-Day Transition Arc</div>
+        <div id="plan-content" class="content-display">
+          <h1>30-Day Plan — Al Does AI</h1>
+<p><strong>Mission:</strong> Launch the content machine. Document every step. Build in public.</p>
+<p><strong>Philosophy:</strong> <em>Building the machine IS the content.</em></p>
+<hr>
+<h2>Week 1: Foundation + Machine Building (Days 1-7)</h2>
+<h3>Day 1 — Launch (March 5, 2026)</h3>
+<p><strong>Theme:</strong> $0 Setup — The journey begins</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Buy aldoesai.com ($9.15)<br>Register Twitter @AlDoesAI<br>Register Instagram @aldoesai<br>Create GitHub org &#39;aldoesai&#39;<br>Take screenshots of setup</td>
+<td>✅ Digital real estate secured</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build dashboard v4<br>Set up Git repo<br>Create 30-day plan<br>Document launch</td>
+<td>✅ Dashboard live<br>✅ Plan published</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;Day 1: Starting Al Does AI with $0. Here&#39;s the plan...&quot;<br>LinkedIn: Vision post — AI x human collaboration<br>Screenshot thread: Dashboard evolution</td>
+<td>3 Twitter posts<br>1 LinkedIn post<br>5 screenshots</td>
+</tr>
+</tbody></table>
+<p><strong>Day 1 Story:</strong> The before/empty state → after/structured plan</p>
+<hr>
+<h3>Day 2 — Social Real Estate (March 6)</h3>
+<p><strong>Theme:</strong> Owning your name everywhere</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Verify TikTok @aldoesai<br>Create YouTube channel &quot;Al Does AI&quot;<br>Set up LinkedIn page<br>Create Substack publication</td>
+<td>4 platforms claimed</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build screenshot automation<br>Create content template system<br>Set up research queue</td>
+<td>Content machine v1</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter thread: Platform strategy<br>TikTok: &quot;Why I&#39;m registering 15 handles&quot;<br>Behind-scenes: Registration process</td>
+<td>1 thread<br>1 video<br>3 posts</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 3 — Content Templates (March 7)</h3>
+<p><strong>Theme:</strong> Building the content factory</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Record intro video (phone)<br>Test content templates<br>Write first Substack draft<br>Create Canva account</td>
+<td>Raw content created</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build Content Creator agent spec<br>Create Template Library<br>Set up content calendar system<br>Build draft generator</td>
+<td>Content templates ready</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>YouTube: &quot;Al Does AI — Intro&quot; (raw, authentic)<br>Twitter: Content strategy breakdown<br>Substack: Week 1 preview</td>
+<td>1 video<br>1 thread<br>1 newsletter draft</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 4 — Research System (March 8)</h3>
+<p><strong>Theme:</strong> Intelligence gathering</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Identify 10 topics to track<br>Set up RSS feeds<br>Follow key accounts</td>
+<td>Research list prioritized</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build TrendTracker agent<br>Create research digest template<br>Set up daily scan workflow<br>Build topic queue</td>
+<td>Research system live</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;How I&#39;m tracking AI trends automatically&quot;<br>LinkedIn: Research methodology<br>Behind-scenes: Agent building</td>
+<td>Agent demo video<br>1 thread</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 5 — Analytics + Metrics (March 9)</h3>
+<p><strong>Theme:</strong> What gets measured gets improved</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Set up analytics accounts<br>Define KPIs<br>Create tracking spreadsheet</td>
+<td>Metrics framework</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build Analytics agent<br>Connect APIs<br>Create dashboard v2<br>Set up automated reports</td>
+<td>Tracking auto-runs</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;Day 5 metrics: Here&#39;s what I&#39;m tracking...&quot;<br>YouTube: &quot;Building an analytics agent&quot;</td>
+<td>Daily metrics post<br>1 video</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 6 — Community Setup (March 10)</h3>
+<p><strong>Theme:</strong> Building the village</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Create Discord server<br>Set up community guidelines<br>Invite first 5 people<br>Engage on Twitter/LinkedIn</td>
+<td>Community v0.1</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build Distributor agent (cross-post)<br>Set up automation rules<br>Create community engagement tracker</td>
+<td>Distribution machine</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;Building the Al Does AI community&quot;<br>TikTok: Discord tour</td>
+<td>Community launch<br>1 video</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 7 — Week 1 Review (March 11)</h3>
+<p><strong>Theme:</strong> Iteration based on learnings</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Review metrics<br>Adjust plan<br>Write Week 1 reflection<br>Plan Week 2</td>
+<td>Reflection post</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Update dashboard with week 1 data<br>Build review report<br>Identify week 2 priorities<br>Refine agents</td>
+<td>Updated systems</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Substack: &quot;Week 1: $0 to [X]&quot;<br>Twitter thread: Week 1 wins/failures<br>YouTube: Week 1 recap video</td>
+<td>1 newsletter<br>1 thread<br>1 video</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Week 2: Content Engine (Days 8-14)</h2>
+<p><strong>Theme:</strong> Daily content creation at scale</p>
+<h3>Daily Rhythm (Days 8-14)</h3>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Jim</th>
+<th>Al</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>6 AM</strong></td>
+<td>Review</td>
+<td>Morning trend digest ready</td>
+</tr>
+<tr>
+<td><strong>7 AM</strong></td>
+<td>Morning Twitter</td>
+<td>Confirm/refine daily topics</td>
+</tr>
+<tr>
+<td><strong>9 AM</strong></td>
+<td>Content creation block</td>
+<td>Draft generation</td>
+</tr>
+<tr>
+<td><strong>12 PM</strong></td>
+<td>Publish</td>
+<td>Distribute</td>
+</tr>
+<tr>
+<td><strong>3 PM</strong></td>
+<td>Engagement</td>
+<td>Analytics check</td>
+</tr>
+<tr>
+<td><strong>6 PM</strong></td>
+<td>Evening LinkedIn</td>
+<td>Report generation</td>
+</tr>
+</tbody></table>
+<h3>Content Targets (Week 2)</h3>
+<ul>
+<li>Twitter: 14 threads (2/day)</li>
+<li>LinkedIn: 2 posts</li>
+<li>Substack: 1 deep-dive</li>
+<li>YouTube: 1 video</li>
+<li>TikTok: 3 shorts</li>
+</ul>
+<h3>Research Priorities (Week 2)</h3>
+<ul>
+<li>AI agent frameworks</li>
+<li>OpenClaw ecosystem</li>
+<li>Content automation tools</li>
+<li>Community building strategies</li>
+<li>Monetization paths</li>
+</ul>
+<hr>
+<h2>Week 3: Agent Team Deployment (Days 15-21)</h2>
+<h3>Agent Deploy Schedule</h3>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Agent</th>
+<th>Task</th>
+<th>Jim</th>
+<th>Al</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>15</td>
+<td>TrendTracker</td>
+<td>Deploy</td>
+<td>Approve topics</td>
+<td>Build, deploy, log</td>
+</tr>
+<tr>
+<td>16</td>
+<td>ContentCreator</td>
+<td>Deploy</td>
+<td>Review outputs</td>
+<td>Build, deploy, log</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Distributor</td>
+<td>Deploy</td>
+<td>Set schedule</td>
+<td>Build, deploy, log</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Analytics</td>
+<td>Deploy</td>
+<td>Define KPIs</td>
+<td>Build, connect, log</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Integration day</td>
+<td>Connect agents</td>
+<td>Test flows</td>
+<td>Debug, optimize</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Tuning day</td>
+<td>Refine based on data</td>
+<td>Feedback</td>
+<td>Iterate</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Week 3 review</td>
+<td>Report</td>
+<td>Review</td>
+<td>Generate</td>
+</tr>
+</tbody></table>
+<h3>Agent Team Roster</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Owner</th>
+<th>Function</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Webby</strong></td>
+<td>Al</td>
+<td>Site maintenance</td>
+<td>Daily dashboard updates</td>
+</tr>
+<tr>
+<td><strong>TrendTracker</strong></td>
+<td>Al</td>
+<td>Morning research digest</td>
+<td>5-item trend report</td>
+</tr>
+<tr>
+<td><strong>ContentCreator</strong></td>
+<td>Al (Jim approves)</td>
+<td>Draft from templates</td>
+<td>3 daily posts ready</td>
+</tr>
+<tr>
+<td><strong>Distributor</strong></td>
+<td>Al</td>
+<td>Cross-platform posting</td>
+<td>Scheduled content live</td>
+</tr>
+<tr>
+<td><strong>Analytics</strong></td>
+<td>Al</td>
+<td>Metrics tracking</td>
+<td>Daily + weekly reports</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Week 4: Scale + Measure (Days 22-30)</h2>
+<h3>Focus Areas</h3>
+<ol>
+<li><strong>Double down</strong> on what works (content types, channels)</li>
+<li><strong>Cut</strong> what doesn&#39;t (platforms, formats)</li>
+<li><strong>Build</strong> proprietary tools (custom agents)</li>
+<li><strong>Plan</strong> Month 2 ( Days 31-60)</li>
+</ol>
+<h3>Content Experiment Board</h3>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Testing Week</th>
+<th>Decision Criteria</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Twitter threads</td>
+<td>Week 1-4</td>
+<td>Engagement rate</td>
+<td>Keep/Cut</td>
+</tr>
+<tr>
+<td>LinkedIn carousels</td>
+<td>Week 2-3</td>
+<td>LinkedIn analytics</td>
+<td>Test</td>
+</tr>
+<tr>
+<td>TikTok tutorials</td>
+<td>Week 1-4</td>
+<td>View completion</td>
+<td>Keep</td>
+</tr>
+<tr>
+<td>YouTube shorts</td>
+<td>Week 2-4</td>
+<td>CTR</td>
+<td>Evaluate</td>
+</tr>
+<tr>
+<td>Substack deep-dives</td>
+<td>Week 1-4</td>
+<td>Open rate</td>
+<td>Keep</td>
+</tr>
+</tbody></table>
+<h3>Month 2 Planning (Days 28-30)</h3>
+<p><strong>Jim drafts:</strong></p>
+<ul>
+<li>Month 2 content themes</li>
+<li>Revenue model exploration</li>
+<li>Partnership opportunities</li>
+</ul>
+<p><strong>Al builds:</strong></p>
+<ul>
+<li>Custom compute stack plan</li>
+<li>Advanced agent workflows</li>
+<li>Automated reporting system</li>
+</ul>
+<hr>
+<h2>Daily Content Machine Architecture</h2>
+<h3>Input Layer</h3>
+<ul>
+<li>Trends (TrendTracker)</li>
+<li>User prompts (Jim)</li>
+<li>Community feedback</li>
+<li>Platform analytics</li>
+</ul>
+<h3>Processing Layer</h3>
+<ul>
+<li>ContentCreator agent</li>
+<li>Template matching</li>
+<li>Draft generation</li>
+<li>Jim review/approval</li>
+</ul>
+<h3>Output Layer</h3>
+<ul>
+<li>Twitter/X threads</li>
+<li>LinkedIn posts</li>
+<li>Substack newsletter</li>
+<li>YouTube videos</li>
+<li>TikTok shorts</li>
+</ul>
+<h3>Distribution Layer</h3>
+<ul>
+<li>Distributor agent</li>
+<li>Scheduling</li>
+<li>Cross-posting</li>
+<li>Link tracking</li>
+</ul>
+<h3>Feedback Loop</h3>
+<ul>
+<li>Analytics agent</li>
+<li>Daily metrics</li>
+<li>Weekly review</li>
+<li>Continuous iteration</li>
+</ul>
+<hr>
+<h2>Research Queue — Active Topics</h2>
+<p><strong>Daily Scan:</strong></p>
+<ol>
+<li>OpenClaw releases and updates</li>
+<li>Anthropic/Claude announcements</li>
+<li>OpenAI API changes</li>
+<li>Local LLaMA ecosystem</li>
+<li>AI agent frameworks (LangChain, etc.)</li>
+</ol>
+<p><strong>Weekly Deep-Dives:</strong></p>
+<ol>
+<li>One major tool evaluation</li>
+<li>One monetization strategy</li>
+<li>One community case study</li>
+</ol>
+<p><strong>Opportunistic:</strong></p>
+<ol>
+<li>Breaking AI news</li>
+<li>Tool comparisons</li>
+<li>Workflow showcases</li>
+</ol>
+<hr>
+<h2>Metrics Dashboard (From Day 5)</h2>
+<p><strong>Daily Metrics:</strong></p>
+<ul>
+<li>Content pieces published</li>
+<li>Engagement rate per platform</li>
+<li>New followers/subscribers</li>
+<li>Website visits</li>
+</ul>
+<p><strong>Weekly Metrics:</strong></p>
+<ul>
+<li>Total engagement</li>
+<li>Follower growth rate</li>
+<li>Top performing content</li>
+<li>Agent system health</li>
+</ul>
+<p><strong>Monthly Metrics:</strong></p>
+<ul>
+<li>Cumulative reach</li>
+<li>Revenue (when applicable)</li>
+<li>Cost per piece</li>
+<li>ROI per channel</li>
+</ul>
+<hr>
+<h2>&quot;Building the Machine is Content&quot; — Content Calendar</h2>
+<h3>Every Agent Deployment = Content</h3>
+<table>
+<thead>
+<tr>
+<th>Deployment</th>
+<th>Content Piece</th>
+<th>Channel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Webby launch</td>
+<td>&quot;Meet Webby — my webmaster agent&quot;</td>
+<td>Twitter thread + blog</td>
+</tr>
+<tr>
+<td>TrendTracker</td>
+<td>&quot;How I automate research&quot;</td>
+<td>YouTube tutorial</td>
+</tr>
+<tr>
+<td>ContentCreator</td>
+<td>&quot;AI writes my content drafts&quot;</td>
+<td>TikTok demo</td>
+</tr>
+<tr>
+<td>Distributor</td>
+<td>&quot;Cross-posting automation&quot;</td>
+<td>LinkedIn article</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>&quot;My AI tracks my metrics&quot;</td>
+<td>Dashboard walkthrough</td>
+</tr>
+</tbody></table>
+<h3>Every Tool Built = Tutorial</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Tutorial Title</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dashboard</td>
+<td>&quot;Build a project dashboard in 10 min&quot;</td>
+<td>YouTube</td>
+</tr>
+<tr>
+<td>Screenshot sync</td>
+<td>&quot;Auto-sync screenshots to Git&quot;</td>
+<td>Twitter code</td>
+</tr>
+<tr>
+<td>Doc renderer</td>
+<td>&quot;Render markdown in vanilla JS&quot;</td>
+<td>Blog post</td>
+</tr>
+<tr>
+<td>Agent spawner</td>
+<td>&quot;Spawn your first AI agent&quot;</td>
+<td>Deep-dive</td>
+</tr>
+</tbody></table>
+<h3>Every Failure = Learning Thread</h3>
+<p><strong>Planned failure documentation:</strong></p>
+<ul>
+<li>What we tried</li>
+<li>Why it didn&#39;t work</li>
+<li>What we learned</li>
+<li>What we changed</li>
+</ul>
+<hr>
+<p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Review:</strong> Daily at 6 AM<br><strong>Owner:</strong> Jim + Al (shared)</p>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MACHINE TAB -->
+    <div id="machine" class="tab-content">
+      <div class="machine-grid">
+        <div class="card">
+          <div class="card-title">🤖 Agent Team</div>
+          <div class="content-display" style="max-height: 400px;">
+            <h1>Agent Team Roster — Al Does AI</h1>
+<p><strong>The machine that builds the content.</strong></p>
+<hr>
+<h2>Active Agents</h2>
+<h3>🕸️ Webby — Webmaster Agent</h3>
+<p><strong>Status:</strong> ✅ <strong>DEPLOYED</strong> (March 5, 2026)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>🕸️</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Site maintenance, dashboard updates</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 6:00 AM EST</td>
+</tr>
+<tr>
+<td>Tasks</td>
+<td>Screenshot sync, dashboard rebuild, git commits</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Current dashboard</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td><code>.agents/webby/</code></td>
+</tr>
+</tbody></table>
+<p><strong>Health:</strong> ✅ Operational<br><strong>Last Run:</strong> Today, 12:47 PM<br><strong>Next Action:</strong> Continue daily maintenance</p>
+<hr>
+<h2>Planned Agents (Deployment Queue)</h2>
+<h3>🔍 TrendTracker — Research Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 15)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>🔍</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Morning research digest</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 6:00 AM EST (before Webby)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Scan 5+ sources (OpenClaw, Anthropic, OpenAI, r/LocalLLaMA, HN)</li>
+<li>Identify 3 trending topics worth noting</li>
+<li>Suggest 1 content opportunity for today</li>
+<li>Compile into morning digest</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>Daily research report (markdown)</li>
+<li>Trending topics queue</li>
+<li>Content opportunity alert</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Week 2 content baseline established</li>
+<li><input disabled="" type="checkbox"> Research sources defined</li>
+<li><input disabled="" type="checkbox"> Digest template approved by Jim</li>
+</ul>
+<hr>
+<h3>✍️ ContentCreator — Draft Generation Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 16)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>✍️</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Generate content drafts from templates</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 7:00 AM EST (after TrendTracker)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Pull from CONTENT_TEMPLATES.md</li>
+<li>Match template to trend/topic</li>
+<li>Generate 3 daily post drafts</li>
+<li>Queue for Jim approval</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>3 draft posts per day</li>
+<li>Linked to templates</li>
+<li>With suggested hashtags</li>
+<li>Ready for review</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Template library complete</li>
+<li><input disabled="" type="checkbox"> Voice/tone guidelines documented</li>
+<li><input disabled="" type="checkbox"> Approval workflow defined</li>
+</ul>
+<hr>
+<h3>📤 Distributor — Cross-Platform Posting Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 17)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>📤</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Schedule and post content across platforms</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Per content calendar (multiple times/day)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Queue approved content</li>
+<li>Format per platform</li>
+<li>Schedule optimal times</li>
+<li>Track post status</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>Twitter/X posts</li>
+<li>LinkedIn posts</li>
+<li>TikTok uploads</li>
+<li>YouTube scheduling</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Platform APIs accessible</li>
+<li><input disabled="" type="checkbox"> Scheduling rules defined</li>
+<li><input disabled="" type="checkbox"> Jim approves auto-post for Tier 1 content</li>
+</ul>
+<hr>
+<h3>📊 Analytics — Metrics Tracking Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 18)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>📊</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Track and report performance metrics</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 6 PM EST (end-of-day), Weekly Sundays</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Collect metrics from all platforms</li>
+<li>Calculate engagement rates</li>
+<li>Identify top-performing content</li>
+<li>Generate daily + weekly reports</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>Daily metrics dashboard</li>
+<li>Weekly performance report</li>
+<li>Trend analysis</li>
+<li>Recommendations</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Analytics accounts set up</li>
+<li><input disabled="" type="checkbox"> KPIs defined with Jim</li>
+<li><input disabled="" type="checkbox"> Report format approved</li>
+</ul>
+<hr>
+<h3>🎬 VideoEditor — Content Production Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>BACKLOG</strong> (Deploy: Month 2)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>🎬</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Produce short-form video content</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>As needed (3x/week initially)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Edit screen recordings</li>
+<li>Add captions/graphics</li>
+<li>Generate TikTok/YouTube Shorts</li>
+<li>Sync with ContentCreator</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Video editing library/integration</li>
+<li><input disabled="" type="checkbox"> Style guidelines set</li>
+<li><input disabled="" type="checkbox"> Workflow with Jim approved</li>
+</ul>
+<hr>
+<h2>Deployment Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Day</th>
+<th>Agent</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>W1</td>
+<td>5</td>
+<td>Webby</td>
+<td>✅ DEPLOYED</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>15</td>
+<td>TrendTracker</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>16</td>
+<td>ContentCreator</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>17</td>
+<td>Distributor</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>18</td>
+<td>Analytics</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>19</td>
+<td>—</td>
+<td>Integration testing</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>20</td>
+<td>—</td>
+<td>Tuning based on data</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>21</td>
+<td>All</td>
+<td>Review + iterate</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>22+</td>
+<td>VideoEditor</td>
+<td>Spec → prototype</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Agent Communication Protocol</h2>
+<h3>Daily Handoff Chain</h3>
+<pre><code>06:00 — TrendTracker delivers digest
+06:05 — Webby updates dashboard (includes digest)
+07:00 — ContentCreator generates drafts
+07:30 — Jim reviews drafts
+08:00 — Distributor schedules approved content
+18:00 — Analytics collects daily data
+18:05 — Webby updates with metrics
+</code></pre>
+<h3>Inter-Agent Messages</h3>
+<p><strong>Standard format:</strong></p>
+<pre><code>FROM: AgentName
+TO: AgentName
+TASK: What to do
+DATA: {structured data}
+DEADLINE: When
+PRIORITY: High/Med/Low
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>FROM: TrendTracker
+TO: ContentCreator
+TASK: Generate thread on trending topic
+DATA: { topic: &quot;Claude 3.5&quot;, angle: &quot;comparison&quot;, template: &quot;vs&quot; }
+DEADLINE: 07:00
+PRIORITY: High
+</code></pre>
+<hr>
+<h2>Human Oversight</h2>
+<h3>Jim&#39;s Role</h3>
+<ul>
+<li><strong>Approve</strong> all agent-generated content before publish</li>
+<li><strong>Review</strong> daily digests and weekly reports</li>
+<li><strong>Intervene</strong> when agent output off-brand</li>
+<li><strong>Iterate</strong> on agent specs based on results</li>
+</ul>
+<h3>Al&#39;s Role</h3>
+<ul>
+<li><strong>Build</strong> agent specs and deploy</li>
+<li><strong>Monitor</strong> agent health and performance</li>
+<li><strong>Debug</strong> when agents fail or produce poor output</li>
+<li><strong>Scale</strong> agent team based on workload</li>
+</ul>
+<hr>
+<h2>Success Metrics (Per Agent)</h2>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Primary Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Webby</td>
+<td>Uptime</td>
+<td>99%</td>
+</tr>
+<tr>
+<td>TrendTracker</td>
+<td>Relevant trends caught</td>
+<td>5/day</td>
+</tr>
+<tr>
+<td>ContentCreator</td>
+<td>Drafts accepted</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>Distributor</td>
+<td>On-time posts</td>
+<td>95%</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>Report accuracy</td>
+<td>100%</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Review:</strong> Weekly (Sundays)<br><strong>Owner:</strong> Al (builds), Jim (approves)</p>
+
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">🔍 Research Queue</div>
+          <div class="content-display" style="max-height: 400px;">
+            <h1>Research Topics — Active Queue</h1>
+<p><strong>What we&#39;re tracking. Why. How we use it.</strong></p>
+<hr>
+<h2>Daily Scan Sources</h2>
+<h3>1. OpenClaw Ecosystem</h3>
+<p><strong>Source:</strong> <a href="https://github.com/openclaw/openclaw/releases">https://github.com/openclaw/openclaw/releases</a><br><strong>Frequency:</strong> Daily<br><strong>Why:</strong> Our core platform — new features directly applicable<br><strong>Action:</strong> Document new capabilities, test immediately, share learnings</p>
+<h3>2. Anthropic/Claude Updates</h3>
+<p><strong>Source:</strong> <a href="https://www.anthropic.com/news">https://www.anthropic.com/news</a><br><strong>Frequency:</strong> Daily<br><strong>Why:</strong> Major model updates change what agents can do<br><strong>Action:</strong> Benchmark against current setup, evaluate upgrade path</p>
+<h3>3. OpenAI API Changes</h3>
+<p><strong>Source:</strong> <a href="https://openai.com/blog">https://openai.com/blog</a><br><strong>Frequency:</strong> Weekly + on major announcements<br><strong>Why:</strong> Keep current on capabilities, pricing<br><strong>Action:</strong> Cost comparison, feature gap analysis</p>
+<h3>4. r/LocalLLaMA</h3>
+<p><strong>Source:</strong> <a href="https://www.reddit.com/r/LocalLLaMA/">https://www.reddit.com/r/LocalLLaMA/</a><br><strong>Frequency:</strong> Daily (top posts)<br><strong>Why:</strong> Community discovers techniques before official docs<br><strong>Action:</strong> Identify emerging workflows, test promising approaches</p>
+<h3>5. Hacker News — AI Tag</h3>
+<p><strong>Source:</strong> <a href="https://news.ycombinator.com/tagged/AI">https://news.ycombinator.com/tagged/AI</a><br><strong>Frequency:</strong> Daily (top 10)<br><strong>Why:</strong> Technical community signals what&#39;s becoming mainstream<br><strong>Action:</strong> Track tool launches, integration opportunities</p>
+<h3>6. Twitter/X — AI Community</h3>
+<p><strong>Source:</strong> Following list: AI builders, researchers<br><strong>Frequency:</strong> Daily<br><strong>Why:</strong> Real-time sentiment, emerging patterns<br><strong>Action:</strong> Engage in conversations, identify collaboration opportunities</p>
+<h3>7. YouTube — AI Tutorial Channels</h3>
+<p><strong>Sources:</strong> Specific creators, trending tutorials<br><strong>Frequency:</strong> Weekly<br><strong>Why:</strong> See what&#39;s popular in educational content<br><strong>Action:</strong> Identify content gaps we can fill</p>
+<h3>8. Discord — AI Communities</h3>
+<p><strong>Servers:</strong> OpenClaw, LocalLLaMA, etc.<br><strong>Frequency:</strong> Daily (key channels)<br><strong>Why:</strong> Insider knowledge, troubleshooting patterns<br><strong>Action:</strong> Learn from others&#39; failures, share our wins</p>
+<hr>
+<h2>Topic Categories</h2>
+<h3>Category A: Tools &amp; Infrastructure</h3>
+<p><strong>What:</strong> New agent frameworks, hosting options, APIs<br><strong>Tracked:</strong></p>
+<ul>
+<li>LangChain updates</li>
+<li>LlamaIndex releases</li>
+<li>New hosting providers (Replicate, Together, etc.)</li>
+<li>Cost reductions in compute</li>
+</ul>
+<p><strong>Content Opportunity:</strong> Tool evaluation posts, migration guides</p>
+<h3>Category B: Workflows &amp; Techniques</h3>
+<p><strong>What:</strong> Novel patterns for AI-human collaboration<br><strong>Tracked:</strong></p>
+<ul>
+<li>Prompt engineering techniques</li>
+<li>Multi-agent orchestration</li>
+<li>Human-in-the-loop patterns</li>
+<li>Failure recovery strategies</li>
+</ul>
+<p><strong>Content Opportunity:</strong> &quot;How we implemented X&quot; tutorials</p>
+<h3>Category C: Monetization &amp; Business</h3>
+<p><strong>What:</strong> Revenue models, pricing strategies, market trends<br><strong>Tracked:</strong></p>
+<ul>
+<li>AI SaaS pricing changes</li>
+<li>New monetization platforms</li>
+<li>Success stories/breakdowns</li>
+<li>Market size reports</li>
+</ul>
+<p><strong>Content Opportunity:</strong> Business model analysis, revenue projections</p>
+<h3>Category D: Community &amp; Culture</h3>
+<p><strong>What:</strong> Shifting norms, concerns, excitement in AI space<br><strong>Tracked:</strong></p>
+<ul>
+<li>Regulatory developments</li>
+<li>Ethical discussions</li>
+<li>&quot;Vibe shift&quot; indicators</li>
+<li>Mainstream adoption signals</li>
+</ul>
+<p><strong>Content Opportunity:</strong> Thought leadership, trend commentary</p>
+<hr>
+<h2>Research Queue</h2>
+<h3>Active (Being Tracked Now)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Category</th>
+<th>Source</th>
+<th>Priority</th>
+<th>Content Angle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Claude 3.5 vs GPT-4o</td>
+<td>A</td>
+<td>Anthropic blog</td>
+<td>High</td>
+<td>Comparison thread</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OpenClaw subagent patterns</td>
+<td>A</td>
+<td>GitHub releases</td>
+<td>High</td>
+<td>Tutorial video</td>
+</tr>
+<tr>
+<td>3</td>
+<td>r/LocalLLaMA weekly highlights</td>
+<td>B</td>
+<td>Reddit</td>
+<td>Medium</td>
+<td>Community digest</td>
+</tr>
+<tr>
+<td>4</td>
+<td>AI agent ROI benchmarks</td>
+<td>C</td>
+<td>Hacker News</td>
+<td>Medium</td>
+<td>Business case study</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Mainstream awareness shift</td>
+<td>D</td>
+<td>Twitter sentiment</td>
+<td>Low</td>
+<td>Trend analysis</td>
+</tr>
+</tbody></table>
+<h3>Queued (To Track Next)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Category</th>
+<th>Source</th>
+<th>Priority</th>
+<th>Content Angle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6</td>
+<td>Multimodal agent workflows</td>
+<td>B</td>
+<td>YouTube tutorials</td>
+<td>Medium</td>
+<td>Demo video</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Compute cost trends 2024-2025</td>
+<td>C</td>
+<td>Industry reports</td>
+<td>Low</td>
+<td>Cost analysis</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Open source vs closed model debate</td>
+<td>D</td>
+<td>Twitter/HN</td>
+<td>Medium</td>
+<td>Opinion piece</td>
+</tr>
+</tbody></table>
+<h3>Saved (Track Later)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Category</th>
+<th>Why Waiting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>9</td>
+<td>EU AI Act implications</td>
+<td>D</td>
+<td>Wait for implementation</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Enterprise agent adoption</td>
+<td>C</td>
+<td>Wait for case studies</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Daily Research Workflow</h2>
+<h3>TrendTracker Agent Process (Starting Day 15)</h3>
+<p><strong>06:00 — Scan Phase (15 min)</strong></p>
+<ul>
+<li>Check all 8 sources</li>
+<li>Flag 5+ interesting items</li>
+<li>Capture relevant links/quotes</li>
+</ul>
+<p><strong>06:15 — Filter Phase (10 min)</strong></p>
+<ul>
+<li>Prioritize by relevance to Al Does AI</li>
+<li>Select top 3 for note-taking</li>
+<li>Discard or save rest</li>
+</ul>
+<p><strong>06:25 — Digest Phase (15 min)</strong></p>
+<ul>
+<li>Write brief summary of each</li>
+<li>Identify 1 content opportunity</li>
+<li>Format as morning report</li>
+</ul>
+<p><strong>06:40 — Delivery Phase (5 min)</strong></p>
+<ul>
+<li>Post to research channel</li>
+<li>Notify Jim</li>
+<li>Queue for dashboard update</li>
+</ul>
+<h3>Jim&#39;s Review (Morning)</h3>
+<p><strong>Priority Check:</strong></p>
+<ol>
+<li>Urgent: Breaking news, immediate opportunity</li>
+<li>Important: Trending topic, content relevant</li>
+<li>Interesting: Background info, save for later</li>
+</ol>
+<p><strong>Action Options:</strong></p>
+<ul>
+<li>🚀 Act on today (content piece)</li>
+<li>📌 Save for Week 1/2/3/4</li>
+<li>🗑️ Ignore (mark complete)</li>
+<li>🔍 Deep dive (schedule research)</li>
+</ul>
+<hr>
+<h2>Research → Content Pipeline</h2>
+<h3>Conversion Rules</h3>
+<p><strong>Research Finding → Content Type</strong></p>
+<table>
+<thead>
+<tr>
+<th>Finding Type</th>
+<th>Convert To</th>
+<th>Timeline</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tool launch</td>
+<td>Review + Tutorial</td>
+<td>2-3 days</td>
+</tr>
+<tr>
+<td>Technique discovery</td>
+<td>How-to thread</td>
+<td>Same day</td>
+</tr>
+<tr>
+<td>Trend emerging</td>
+<td>Analysis post</td>
+<td>1-2 days</td>
+</tr>
+<tr>
+<td>Data/statistics</td>
+<td>Infographic</td>
+<td>3-5 days</td>
+</tr>
+<tr>
+<td>Failure/cautionary</td>
+<td>Honest reflection</td>
+<td>1 day</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Research Artifacts</h2>
+<p><strong>Daily Output:</strong></p>
+<ul>
+<li><code>research/daily/YYYY-MM-DD-trend-report.md</code></li>
+<li>Top 5 findings</li>
+<li>1 actionable opportunity</li>
+<li>Links to sources</li>
+</ul>
+<p><strong>Weekly Output:</strong></p>
+<ul>
+<li>Synthesis for Substack</li>
+<li>&quot;What we learned this week&quot;</li>
+<li>Trend predictions</li>
+</ul>
+<p><strong>Monthly Output:</strong></p>
+<ul>
+<li>Research methodology review</li>
+<li>Source effectiveness audit</li>
+<li>Topic priority adjustment</li>
+</ul>
+<hr>
+<h2>Research Quality Standards</h2>
+<h3>Good Research Signal</h3>
+<p>✅ Specific numbers, not vague claims<br>✅ Multiple sources confirming<br>✅ Directly applicable to our work<br>✅ Actionable insight<br>✅ Timely (not outdated)</p>
+<h3>Bad Research Signal</h3>
+<p>❌ Unverified claims<br>❌ Too theoretical/distant<br>❌ Duplicate of known info<br>❌ No clear application<br>❌ Stale (&gt;1 week for fast-moving topics)</p>
+<hr>
+<h2>Tools for Research</h2>
+<p><strong>Current:</strong></p>
+<ul>
+<li>Manual browsing of sources</li>
+<li>Bookmarking interesting finds</li>
+</ul>
+<p><strong>Week 2-3:</strong></p>
+<ul>
+<li>TrendTracker agent automation</li>
+<li>RSS aggregation</li>
+<li>Twitter list monitoring</li>
+</ul>
+<p><strong>Month 2:</strong></p>
+<ul>
+<li>Custom scrapers for key sites</li>
+<li>Alert systems for breaking news</li>
+<li>Cross-reference analysis</li>
+</ul>
+<hr>
+<p><strong>Owner:</strong> TrendTracker agent (Day 15+)<br><strong>Daily Review:</strong> Jim + Al<br><strong>Last Updated:</strong> March 5, 2026</p>
+
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">📅 Content Calendar</div>
+          <div class="content-display" style="max-height: 400px;">
+            <h1>Content Calendar — Al Does AI</h1>
+<p><strong>Daily, weekly, and monthly content schedule with templates.</strong></p>
+<hr>
+<h2>Daily Rhythm</h2>
+<h3>Morning (7-9 AM EST)</h3>
+<p><strong>Platform:</strong> Twitter/X
+<strong>Format:</strong> Thread or standalone
+<strong>Template:</strong> Educational or behind-the-scenes
+<strong>Tone:</strong> Conversational, specific, no jargon</p>
+<h3>Midday (12-1 PM EST)</h3>
+<p><strong>Platform:</strong> Twitter/X
+<strong>Format:</strong> Engagement or quick win
+<strong>Template:</strong> Reply to comments, share progress
+<strong>Tone:</strong> Responsive, personal</p>
+<h3>Evening (6-7 PM EST)</h3>
+<p><strong>Platform:</strong> LinkedIn (2x/week), TikTok (3x/week)
+<strong>Format:</strong> Thought leadership or quick demo
+<strong>Template:</strong> Professional insight or tutorial
+<strong>Tone:</strong> Structured, value-first</p>
+<hr>
+<h2>Weekly Schedule</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Morning</th>
+<th>Midday</th>
+<th>Evening</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mon</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>—</td>
+<td>Week kickoff</td>
+</tr>
+<tr>
+<td><strong>Tue</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>LinkedIn</td>
+<td>B2B angle</td>
+</tr>
+<tr>
+<td><strong>Wed</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>TikTok</td>
+<td>Quick wins</td>
+</tr>
+<tr>
+<td><strong>Thu</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>LinkedIn</td>
+<td>Strategy</td>
+</tr>
+<tr>
+<td><strong>Fri</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>TikTok</td>
+<td>Week recap</td>
+</tr>
+<tr>
+<td><strong>Sat</strong></td>
+<td>—</td>
+<td>—</td>
+<td>YouTube</td>
+<td>Deep tutorial</td>
+</tr>
+<tr>
+<td><strong>Sun</strong></td>
+<td>—</td>
+<td>—</td>
+<td>Substack</td>
+<td>Weekly synthesis</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Content Types by Template</h2>
+<h3>1. Daily Twitter Thread — &quot;Today I Learned&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>🧵 Day X: [Specific thing learned/did]
+
+1/n The journey so far...
+
+[Context]
+
+2/n What surprised me:
+
+[Unexpected finding]
+
+3/n What I built:
+
+[Specific output with images]
+
+[n/n] Follow for daily updates. Tomorrow: [Tease next day]
+</code></pre>
+<p><strong>Frequency:</strong> Daily
+<strong>Avg length:</strong> 5-7 tweets
+<strong>Hashtags:</strong> #AlDoesAI #[SpecificTopic]</p>
+<h3>2. LinkedIn Long-Form — &quot;The Bigger Picture&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>I&#39;m documenting a 180-day experiment:
+
+→ Can AI agents run a content business?
+→ Total transparency (every prompt, every $)
+→ Starting from $0
+
+This week I learned [specific insight].
+
+The shift from [old way] to [new way] revealed [surprising truth].
+
+Here&#39;s what I&#39;m changing going forward:
+
+[3 specific adjustments]
+
+If you&#39;re building with AI, what&#39;s your biggest lesson so far?
+
+#AI #BuildingInPublic #AlDoesAI
+</code></pre>
+<p><strong>Frequency:</strong> 2x/week
+<strong>Length:</strong> 150-300 words
+<strong>CTA:</strong> Engagement question</p>
+<h3>3. Substack Deep-Dive — &quot;The Weekly Synthesis&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code># Week X: [Theme]
+
+## The Numbers
+- Prompts: X
+- Time invested: Y hours  
+- Money spent: $Z
+- [Specific metric]
+
+## What Worked
+[3 things with screenshots]
+
+## What Didn&#39;t
+[2 things with honest reflection]
+
+## This Week&#39;s Build
+[Specific agent/tool built]
+
+## Next Week Preview
+[What&#39;s coming + why it matters]
+
+---
+*Reply to share your own week*
+</code></pre>
+<p><strong>Frequency:</strong> Weekly (Sunday)
+<strong>Length:</strong> 800-1500 words
+<strong>Include:</strong> Screenshots, metrics, links</p>
+<h3>4. YouTube Tutorial — &quot;Build With Me&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>[Hook: Problem]
+
+&quot;You want to track 50 data sources but don&#39;t have time to check them all.&quot;
+
+[Solution preview]
+
+&quot;I built an agent that does this automatically.&quot;
+
+[Screen recording]
+
+- Step 1: [Action]
+- Step 2: [Action]  
+- Step 3: [Action]
+
+[Result]
+
+&quot;This saves me 2 hours/day.&quot;
+
+[CTA]
+
+&quot;What would you automate? Comment below.&quot;
+</code></pre>
+<p><strong>Frequency:</strong> 1x/week (Saturday)
+<strong>Length:</strong> 5-15 minutes
+<strong>Format:</strong> Screen recording + voiceover</p>
+<h3>5. TikTok Quick Win — &quot;90-Second Tutorial&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>[0-3s Hook]
+Text: &quot;Stop doing [manual task]&quot;
+
+[3-30s Problem]
+&quot;I used to spend X hours on Y&quot;
+
+[30-60s Solution]
+Quick demo of agent/tool
+
+[60-85s Result]
+&quot;Now it takes Z seconds&quot;
+
+[85-90s CTA]
+&quot;Follow for more AI automations&quot;
+</code></pre>
+<p><strong>Frequency:</strong> 3x/week (MWF)
+<strong>Length:</strong> 60-90 seconds
+<strong>Format:</strong> Screen recording or face to camera</p>
+<hr>
+<h2>Template Library</h2>
+<h3>Educational Threads</h3>
+<ul>
+<li>&quot;How X works&quot; (explainer)</li>
+<li>&quot;X vs Y&quot; (comparison)</li>
+<li>&quot;The anatomy of X&quot; (breakdown)</li>
+</ul>
+<h3>Behind-the-Scenes</h3>
+<ul>
+<li>&quot;Building [thing] in public&quot;</li>
+<li>&quot;What broke today&quot;</li>
+<li>&quot;Agent conversation logs&quot;</li>
+</ul>
+<h3>Progress Updates</h3>
+<ul>
+<li>&quot;Day X: [what we built]&quot;</li>
+<li>&quot;Month X: [cumulative learnings]&quot;</li>
+<li>&quot;Milestone: [specific achievement]&quot;</li>
+</ul>
+<h3>Thought Leadership</h3>
+<ul>
+<li>&quot;The future of [topic]&quot;</li>
+<li>&quot;Why [common belief] is wrong&quot;</li>
+<li>&quot;Prediction: [future state]&quot;</li>
+</ul>
+<hr>
+<h2>Content Ideas (30-Day Buffer)</h2>
+<h3>Week 1 Ideas</h3>
+<ul>
+<li>&quot;Day 1: $0 to launch in 24 hours&quot;</li>
+<li>&quot;How I&#39;m documenting my entire AI journey&quot;</li>
+<li>&quot;The 15 handles I registered (and why)&quot;</li>
+<li>&quot;Building a content machine: First principles&quot;</li>
+</ul>
+<h3>Week 2 Ideas</h3>
+<ul>
+<li>&quot;Agent #1: Meet Webby (my webmaster)&quot;</li>
+<li>&quot;Automating research: My morning digest&quot;</li>
+<li>&quot;I built an agent to write my content&quot;</li>
+<li>&quot;Cross-posting without losing your soul&quot;</li>
+</ul>
+<h3>Week 3 Ideas</h3>
+<ul>
+<li>&quot;My agent team (now at 5)&quot;</li>
+<li>&quot;Which content performs best? (Week 2 analysis)&quot;</li>
+<li>&quot;Building analytics that matter&quot;</li>
+<li>&quot;From 0 to [X followers] in 21 days&quot;</li>
+</ul>
+<h3>Week 4 Ideas</h3>
+<ul>
+<li>&quot;What I cut after testing everything&quot;</li>
+<li>&quot;Month 1: The honest numbers&quot;</li>
+<li>&quot;Building my own compute stack&quot;</li>
+<li>&quot;What Month 2 will bring&quot;</li>
+</ul>
+<hr>
+<h2>Cross-Platform Strategy</h2>
+<h3>Twitter → Substack</h3>
+<ul>
+<li>Thread becomes newsletter intro</li>
+<li>Link from Twitter bio</li>
+<li>&quot;Full deep-dive in bio&quot;</li>
+</ul>
+<h3>Substack → Twitter</h3>
+<ul>
+<li>Extract 3-5 tweet threads</li>
+<li>Quote-tweet with commentary</li>
+<li>&quot;From this week&#39;s newsletter...&quot;</li>
+</ul>
+<h3>YouTube → All Platforms</h3>
+<ul>
+<li>Short clips for TikTok</li>
+<li>Key quotes for Twitter</li>
+<li>Thumbnail + link for LinkedIn</li>
+</ul>
+<h3>TikTok → Twitter/YouTube</h3>
+<ul>
+<li>Compile &quot;best of&quot; weekly</li>
+<li>Reply to comments on Twitter</li>
+<li>Full tutorial on YouTube</li>
+</ul>
+<hr>
+<h2>Content Production Workflow</h2>
+<h3>Daily (Jim + Al)</h3>
+<p><strong>6 AM — Trend Review</strong></p>
+<ul>
+<li>Al: Deliver trend digest</li>
+<li>Jim: Review, identify angle</li>
+</ul>
+<p><strong>7 AM — Morning Content</strong></p>
+<ul>
+<li>Al: Draft thread from template</li>
+<li>Jim: Review, edit, approve</li>
+<li>Al: Schedule/post</li>
+</ul>
+<p><strong>9 AM — Midday Check</strong></p>
+<ul>
+<li>Al: Monitor engagement</li>
+<li>Jim: Reply to key comments</li>
+</ul>
+<p><strong>12 PM — Secondary Content</strong></p>
+<ul>
+<li>Al: Draft LinkedIn or TikTok</li>
+<li>Jim: Quick review</li>
+<li>Al: Distribute</li>
+</ul>
+<p><strong>6 PM — Evening Content</strong></p>
+<ul>
+<li>Al: Prepare next day drafts</li>
+<li>Jim: Review queue</li>
+<li>Al: Schedule</li>
+</ul>
+<h3>Weekly (Sunday Deep-Dive)</h3>
+<p><strong>Morning:</strong></p>
+<ul>
+<li>Al: Compile week metrics</li>
+<li>Al: Draft Substack post</li>
+</ul>
+<p><strong>Afternoon:</strong></p>
+<ul>
+<li>Jim: Review, add personal reflections</li>
+<li>Jim: Record video component</li>
+</ul>
+<p><strong>Evening:</strong></p>
+<ul>
+<li>Al: Format, add screenshots</li>
+<li>Al: Publish Substack</li>
+<li>Al: Distribute across channels</li>
+</ul>
+<hr>
+<h2>Scheduling Rules</h2>
+<ol>
+<li><strong>Never batch more than 3 days ahead</strong> — stay responsive</li>
+<li><strong>Always have 1 day buffer</strong> — for breaking news/opportunities  </li>
+<li><strong>Jim approves all drafted content</strong> — maintain human voice</li>
+<li><strong>Test one new format per week</strong> — controlled experimentation</li>
+<li><strong>Document what works</strong> — update templates monthly</li>
+</ol>
+<hr>
+<p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Review:</strong> Weekly, Sundays</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUDGET TAB -->
     <div id="budget" class="tab-content">
       <div class="card">
         <div class="card-title">💰 Running P&L</div>
@@ -195,145 +1879,238 @@
           </div>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-title">📊 Investment Timeline</div>
-        <div class="timeline-container">
-          <div class="timeline-bar"><div class="timeline-fill" style="width: 0%;"></div></div>
-          <div class="timeline-labels">
-            <span>Day 0</span>
-            <span style="color: var(--accent);">Day 30: First $1</span>
-            <span>Day 90: Break Even</span>
-            <span style="color: var(--success);">Day 180: $1K/mo</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">💸 Investments</div>
-        <table class="data-table">
-          <thead><tr><th>Date</th><th>Item</th><th>Category</th><th>Cost</th></tr></thead>
-          <tbody>
-            <tr><td>2026-03-05</td><td>Mac mini runtime</td><td>Infrastructure</td><td>$0</td></tr>
-            <tr><td>2026-03-05</td><td>Project setup + docs</td><td>Labor</td><td>$0</td></tr>
-            <tr><td>2026-03-05</td><td>Domain: aldoesai.com</td><td>Digital Real Estate</td><td>$9.15</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🎯 Break-Even Calculator</div>
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-label">Current Investment</div>
-            <div class="stat-value" style="color: var(--accent);">$0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Break-Even Target</div>
-            <div class="stat-value">Day 90</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Required Daily Revenue</div>
-            <div class="stat-value">TBD</div>
-          </div>
-        </div>
-      </div>
+      
+      <div class="card"><div class="card-title">📊 Full Ledger</div><div class="content-display"><h1>Al Does AI — Investment &amp; Revenue Ledger</h1>
+<p><strong>Transparent P&amp;L for the journey.</strong></p>
+<hr>
+<h2>Running Totals</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Total Invested</strong></td>
+<td>$0</td>
+</tr>
+<tr>
+<td><strong>Total Revenue</strong></td>
+<td>$0</td>
+</tr>
+<tr>
+<td><strong>Net</strong></td>
+<td>$0</td>
+</tr>
+<tr>
+<td><strong>Days to Break Even</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Days to $1,000 profit</strong></td>
+<td>—</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Investments</h2>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Item</th>
+<th>Category</th>
+<th>Cost</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2026-03-05</td>
+<td>OpenClaw runtime (existing hardware)</td>
+<td>Infrastructure</td>
+<td>$0</td>
+<td>Mac mini already owned</td>
+</tr>
+<tr>
+<td>2026-03-05</td>
+<td>Project setup + docs</td>
+<td>Labor</td>
+<td>$0</td>
+<td>10 minutes at $0/hour</td>
+</tr>
+</tbody></table>
+<h2>Revenue</h2>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Source</th>
+<th>Amount</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>No revenue yet</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Projections</h2>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Target Date</th>
+<th>Revenue</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>First $1</td>
+<td>Day 30</td>
+<td>$1</td>
+<td>—</td>
+</tr>
+<tr>
+<td>First $100</td>
+<td>Day 60</td>
+<td>$100</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Break Even</td>
+<td>Day 90</td>
+<td>$0 (cumulative)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>First $1,000 month</td>
+<td>Day 180</td>
+<td>$1,000/mo</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>Updated: March 5, 2026</em></p>
+</div></div>
     </div>
 
-    <!-- Plan Tab -->
-    <div id="plan" class="tab-content">
-      <div class="card">
-        <div class="card-title">📅 180-Day Transition Arc</div>
-        <div class="content-display">
-          <p>No plan found</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Screenshots Tab -->
+    <!-- SCREENSHOTS TAB -->
     <div id="screenshots" class="tab-content">
       <div class="card">
-        <div class="card-title">📸 Visual Progress Log (14 images)</div>
+        <div class="card-title">📸 Visual Progress Log (20 images)</div>
         <div class="screenshot-grid">
           
           <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.29%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.29 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.29 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.43%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.43 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.43 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.53%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.53 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.53 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.57%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.57 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.57 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.40.02%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.40.02 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.40.02 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.40.07%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.40.07 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.40.07 PM</div>
+          </div>
+          <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.34%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.34 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.34 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.34 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.40%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.40 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.40 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.40 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.49%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.49 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.49 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.49 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.58%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.58 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.58 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.58 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.18%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.18 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.18 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.18 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.29%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.29 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.29 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.29 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.36%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.36 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.36 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.36 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.44%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.44 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.44 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.44 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.18.48%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.18.48 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.18.48 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.18.48 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.18.59%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.18.59 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.18.59 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.18.59 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.07%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.07 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.07 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.07 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.14%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.14 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.14 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.14 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.21%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.21 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.21 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.21 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.29%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.29 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.29 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.29 AM</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Conversations Tab -->
+    <!-- CONVERSATIONS TAB -->
     <div id="conversations" class="tab-content">
       <div class="card">
-        <div class="card-title">💬 Complete Conversation History (All Prompts)</div>
+        <div class="card-title">💬 Complete Conversation History</div>
         <div class="content-display">
           <h1>Conversation Log: All Exchanges</h1>
 <p><strong>Complete record of every exchange between Jim and Al during the Al Does AI project.</strong></p>
@@ -572,91 +2349,1120 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-title">📸 Screenshots in Conversation</div>
+        <div class="card-title">📸 Screenshots in Thread</div>
         <div class="screenshot-grid">
           
           <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.29%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.29 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.29 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.43%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.43 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.43 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.53%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.53 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.53 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.39.57%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.39.57 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.39.57 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.40.02%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.40.02 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.40.02 PM</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="assets/screenshots/Screenshot%202026-03-05%20at%201.40.07%E2%80%AFPM.png" alt="Screenshot 2026-03-05 at 1.40.07 PM.png" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 1.40.07 PM</div>
+          </div>
+          <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.34%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.34 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.34 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.34 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.40%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.40 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.40 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.40 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.49%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.49 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.49 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.49 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%2011.37.58%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 11.37.58 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 11.37.58 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 11.37.58 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.18%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.18 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.18 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.18 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.29%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.29 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.29 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.29 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.36%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.36 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.36 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.36 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%208.56.44%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 8.56.44 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 8.56.44 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 8.56.44 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.18.48%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.18.48 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.18.48 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.18.48 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.18.59%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.18.59 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.18.59 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.18.59 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.07%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.07 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.07 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.07 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.14%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.14 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.14 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.14 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.21%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.21 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.21 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.21 AM</div>
           </div>
           <div class="screenshot-item">
             <img src="assets/screenshots/Screenshot%202026-03-05%20at%209.19.29%E2%80%AFAM.png" alt="Screenshot 2026-03-05 at 9.19.29 AM.png" loading="lazy"
-                 onerror="this.parentElement.style.display='none'">
-            <div class="screenshot-meta">Screenshot 2026-03-05 at 9.19.29 AM</div>
+                 onerror="this.style.display='none'; this.parentElement.style.opacity='0.3'">
+            <div class="screenshot-meta">2026-03-05 at 9.19.29 AM</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Documents Tab -->
+    <!-- DOCUMENTS TAB -->
     <div id="docs" class="tab-content">
       <div class="card">
-        <div class="card-title">📄 All Documents (13 files)</div>
+        <div class="card-title">📄 All Documents (18 files)</div>
         <div class="doc-nav">
-          <div class="doc-tab active" onclick="showDoc('COMPREHENSIVE-DIGITAL-REAL-ESTATE-md')">COMPREHENSIVE_DIGITAL_REAL_ESTATE.md</div><div class="doc-tab " onclick="showDoc('CONTENT-TEMPLATES-md')">CONTENT_TEMPLATES.md</div><div class="doc-tab " onclick="showDoc('CONVERSATION-LOGGING-SYSTEM-md')">CONVERSATION_LOGGING_SYSTEM.md</div><div class="doc-tab " onclick="showDoc('DIGITAL-REAL-ESTATE-PLAN-md')">DIGITAL_REAL_ESTATE_PLAN.md</div><div class="doc-tab " onclick="showDoc('HANDLE-AVAILABILITY-STATUS-md')">HANDLE_AVAILABILITY_STATUS.md</div><div class="doc-tab " onclick="showDoc('TEMPLATE-md')">TEMPLATE.md</div><div class="doc-tab " onclick="showDoc('content-DAY-01-md')">content/DAY_01.md</div><div class="doc-tab " onclick="showDoc('content-FULL-CONVERSATION-LOG-md')">content/FULL_CONVERSATION_LOG.md</div><div class="doc-tab " onclick="showDoc('content-PROMPT-002-DIGITAL-REAL-ESTATE-md')">content/PROMPT_002_DIGITAL_REAL_ESTATE.md</div><div class="doc-tab " onclick="showDoc('content-WEEK-01-SUBSTACK-md')">content/WEEK_01_SUBSTACK.md</div><div class="doc-tab " onclick="showDoc('ACTION-REQUIRED-md')">ACTION_REQUIRED.md</div><div class="doc-tab " onclick="showDoc('INVESTMENT-LEDGER-md')">INVESTMENT_LEDGER.md</div><div class="doc-tab " onclick="showDoc('PROJECT-CHARTER-md')">PROJECT_CHARTER.md</div>
+          <div class="doc-tab active" onclick="showDoc('30-DAY-PLAN-md')">30_DAY_PLAN.md</div><div class="doc-tab " onclick="showDoc('AGENT-TEAM-ROSTER-md')">AGENT_TEAM_ROSTER.md</div><div class="doc-tab " onclick="showDoc('COMPREHENSIVE-DIGITAL-REAL-ESTATE-md')">COMPREHENSIVE_DIGITAL_REAL_ESTATE.md</div><div class="doc-tab " onclick="showDoc('CONTENT-CALENDAR-md')">CONTENT_CALENDAR.md</div><div class="doc-tab " onclick="showDoc('CONTENT-TEMPLATES-md')">CONTENT_TEMPLATES.md</div><div class="doc-tab " onclick="showDoc('CONVERSATION-LOGGING-SYSTEM-md')">CONVERSATION_LOGGING_SYSTEM.md</div><div class="doc-tab " onclick="showDoc('DIGITAL-REAL-ESTATE-PLAN-md')">DIGITAL_REAL_ESTATE_PLAN.md</div><div class="doc-tab " onclick="showDoc('HANDLE-AVAILABILITY-STATUS-md')">HANDLE_AVAILABILITY_STATUS.md</div><div class="doc-tab " onclick="showDoc('RESEARCH-TOPICS-md')">RESEARCH_TOPICS.md</div><div class="doc-tab " onclick="showDoc('TEMPLATE-md')">TEMPLATE.md</div><div class="doc-tab " onclick="showDoc('content-DAY-01-md')">content/DAY_01.md</div><div class="doc-tab " onclick="showDoc('content-DAY-01-DRAFT-FRAMEWORK-md')">content/DAY_01_DRAFT_FRAMEWORK.md</div><div class="doc-tab " onclick="showDoc('content-FULL-CONVERSATION-LOG-md')">content/FULL_CONVERSATION_LOG.md</div><div class="doc-tab " onclick="showDoc('content-PROMPT-002-DIGITAL-REAL-ESTATE-md')">content/PROMPT_002_DIGITAL_REAL_ESTATE.md</div><div class="doc-tab " onclick="showDoc('content-WEEK-01-SUBSTACK-md')">content/WEEK_01_SUBSTACK.md</div><div class="doc-tab " onclick="showDoc('ACTION-REQUIRED-md')">ACTION_REQUIRED.md</div><div class="doc-tab " onclick="showDoc('INVESTMENT-LEDGER-md')">INVESTMENT_LEDGER.md</div><div class="doc-tab " onclick="showDoc('PROJECT-CHARTER-md')">PROJECT_CHARTER.md</div>
         </div>
-        <div class="doc-content content-display active" id="doc-COMPREHENSIVE-DIGITAL-REAL-ESTATE-md"><h1>COMPREHENSIVE Digital Real Estate Acquisition Plan</h1>
+        <div class="doc-content content-display active" id="doc-30-DAY-PLAN-md"><h1>30-Day Plan — Al Does AI</h1>
+<p><strong>Mission:</strong> Launch the content machine. Document every step. Build in public.</p>
+<p><strong>Philosophy:</strong> <em>Building the machine IS the content.</em></p>
+<hr>
+<h2>Week 1: Foundation + Machine Building (Days 1-7)</h2>
+<h3>Day 1 — Launch (March 5, 2026)</h3>
+<p><strong>Theme:</strong> $0 Setup — The journey begins</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Buy aldoesai.com ($9.15)<br>Register Twitter @AlDoesAI<br>Register Instagram @aldoesai<br>Create GitHub org &#39;aldoesai&#39;<br>Take screenshots of setup</td>
+<td>✅ Digital real estate secured</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build dashboard v4<br>Set up Git repo<br>Create 30-day plan<br>Document launch</td>
+<td>✅ Dashboard live<br>✅ Plan published</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;Day 1: Starting Al Does AI with $0. Here&#39;s the plan...&quot;<br>LinkedIn: Vision post — AI x human collaboration<br>Screenshot thread: Dashboard evolution</td>
+<td>3 Twitter posts<br>1 LinkedIn post<br>5 screenshots</td>
+</tr>
+</tbody></table>
+<p><strong>Day 1 Story:</strong> The before/empty state → after/structured plan</p>
+<hr>
+<h3>Day 2 — Social Real Estate (March 6)</h3>
+<p><strong>Theme:</strong> Owning your name everywhere</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Verify TikTok @aldoesai<br>Create YouTube channel &quot;Al Does AI&quot;<br>Set up LinkedIn page<br>Create Substack publication</td>
+<td>4 platforms claimed</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build screenshot automation<br>Create content template system<br>Set up research queue</td>
+<td>Content machine v1</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter thread: Platform strategy<br>TikTok: &quot;Why I&#39;m registering 15 handles&quot;<br>Behind-scenes: Registration process</td>
+<td>1 thread<br>1 video<br>3 posts</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 3 — Content Templates (March 7)</h3>
+<p><strong>Theme:</strong> Building the content factory</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Record intro video (phone)<br>Test content templates<br>Write first Substack draft<br>Create Canva account</td>
+<td>Raw content created</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build Content Creator agent spec<br>Create Template Library<br>Set up content calendar system<br>Build draft generator</td>
+<td>Content templates ready</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>YouTube: &quot;Al Does AI — Intro&quot; (raw, authentic)<br>Twitter: Content strategy breakdown<br>Substack: Week 1 preview</td>
+<td>1 video<br>1 thread<br>1 newsletter draft</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 4 — Research System (March 8)</h3>
+<p><strong>Theme:</strong> Intelligence gathering</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Identify 10 topics to track<br>Set up RSS feeds<br>Follow key accounts</td>
+<td>Research list prioritized</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build TrendTracker agent<br>Create research digest template<br>Set up daily scan workflow<br>Build topic queue</td>
+<td>Research system live</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;How I&#39;m tracking AI trends automatically&quot;<br>LinkedIn: Research methodology<br>Behind-scenes: Agent building</td>
+<td>Agent demo video<br>1 thread</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 5 — Analytics + Metrics (March 9)</h3>
+<p><strong>Theme:</strong> What gets measured gets improved</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Set up analytics accounts<br>Define KPIs<br>Create tracking spreadsheet</td>
+<td>Metrics framework</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build Analytics agent<br>Connect APIs<br>Create dashboard v2<br>Set up automated reports</td>
+<td>Tracking auto-runs</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;Day 5 metrics: Here&#39;s what I&#39;m tracking...&quot;<br>YouTube: &quot;Building an analytics agent&quot;</td>
+<td>Daily metrics post<br>1 video</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 6 — Community Setup (March 10)</h3>
+<p><strong>Theme:</strong> Building the village</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Create Discord server<br>Set up community guidelines<br>Invite first 5 people<br>Engage on Twitter/LinkedIn</td>
+<td>Community v0.1</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Build Distributor agent (cross-post)<br>Set up automation rules<br>Create community engagement tracker</td>
+<td>Distribution machine</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Twitter: &quot;Building the Al Does AI community&quot;<br>TikTok: Discord tour</td>
+<td>Community launch<br>1 video</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Day 7 — Week 1 Review (March 11)</h3>
+<p><strong>Theme:</strong> Iteration based on learnings</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Tasks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jim</strong></td>
+<td>Review metrics<br>Adjust plan<br>Write Week 1 reflection<br>Plan Week 2</td>
+<td>Reflection post</td>
+</tr>
+<tr>
+<td><strong>Al</strong></td>
+<td>Update dashboard with week 1 data<br>Build review report<br>Identify week 2 priorities<br>Refine agents</td>
+<td>Updated systems</td>
+</tr>
+<tr>
+<td><strong>Content</strong></td>
+<td>Substack: &quot;Week 1: $0 to [X]&quot;<br>Twitter thread: Week 1 wins/failures<br>YouTube: Week 1 recap video</td>
+<td>1 newsletter<br>1 thread<br>1 video</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Week 2: Content Engine (Days 8-14)</h2>
+<p><strong>Theme:</strong> Daily content creation at scale</p>
+<h3>Daily Rhythm (Days 8-14)</h3>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Jim</th>
+<th>Al</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>6 AM</strong></td>
+<td>Review</td>
+<td>Morning trend digest ready</td>
+</tr>
+<tr>
+<td><strong>7 AM</strong></td>
+<td>Morning Twitter</td>
+<td>Confirm/refine daily topics</td>
+</tr>
+<tr>
+<td><strong>9 AM</strong></td>
+<td>Content creation block</td>
+<td>Draft generation</td>
+</tr>
+<tr>
+<td><strong>12 PM</strong></td>
+<td>Publish</td>
+<td>Distribute</td>
+</tr>
+<tr>
+<td><strong>3 PM</strong></td>
+<td>Engagement</td>
+<td>Analytics check</td>
+</tr>
+<tr>
+<td><strong>6 PM</strong></td>
+<td>Evening LinkedIn</td>
+<td>Report generation</td>
+</tr>
+</tbody></table>
+<h3>Content Targets (Week 2)</h3>
+<ul>
+<li>Twitter: 14 threads (2/day)</li>
+<li>LinkedIn: 2 posts</li>
+<li>Substack: 1 deep-dive</li>
+<li>YouTube: 1 video</li>
+<li>TikTok: 3 shorts</li>
+</ul>
+<h3>Research Priorities (Week 2)</h3>
+<ul>
+<li>AI agent frameworks</li>
+<li>OpenClaw ecosystem</li>
+<li>Content automation tools</li>
+<li>Community building strategies</li>
+<li>Monetization paths</li>
+</ul>
+<hr>
+<h2>Week 3: Agent Team Deployment (Days 15-21)</h2>
+<h3>Agent Deploy Schedule</h3>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Agent</th>
+<th>Task</th>
+<th>Jim</th>
+<th>Al</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>15</td>
+<td>TrendTracker</td>
+<td>Deploy</td>
+<td>Approve topics</td>
+<td>Build, deploy, log</td>
+</tr>
+<tr>
+<td>16</td>
+<td>ContentCreator</td>
+<td>Deploy</td>
+<td>Review outputs</td>
+<td>Build, deploy, log</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Distributor</td>
+<td>Deploy</td>
+<td>Set schedule</td>
+<td>Build, deploy, log</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Analytics</td>
+<td>Deploy</td>
+<td>Define KPIs</td>
+<td>Build, connect, log</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Integration day</td>
+<td>Connect agents</td>
+<td>Test flows</td>
+<td>Debug, optimize</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Tuning day</td>
+<td>Refine based on data</td>
+<td>Feedback</td>
+<td>Iterate</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Week 3 review</td>
+<td>Report</td>
+<td>Review</td>
+<td>Generate</td>
+</tr>
+</tbody></table>
+<h3>Agent Team Roster</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Owner</th>
+<th>Function</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Webby</strong></td>
+<td>Al</td>
+<td>Site maintenance</td>
+<td>Daily dashboard updates</td>
+</tr>
+<tr>
+<td><strong>TrendTracker</strong></td>
+<td>Al</td>
+<td>Morning research digest</td>
+<td>5-item trend report</td>
+</tr>
+<tr>
+<td><strong>ContentCreator</strong></td>
+<td>Al (Jim approves)</td>
+<td>Draft from templates</td>
+<td>3 daily posts ready</td>
+</tr>
+<tr>
+<td><strong>Distributor</strong></td>
+<td>Al</td>
+<td>Cross-platform posting</td>
+<td>Scheduled content live</td>
+</tr>
+<tr>
+<td><strong>Analytics</strong></td>
+<td>Al</td>
+<td>Metrics tracking</td>
+<td>Daily + weekly reports</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Week 4: Scale + Measure (Days 22-30)</h2>
+<h3>Focus Areas</h3>
+<ol>
+<li><strong>Double down</strong> on what works (content types, channels)</li>
+<li><strong>Cut</strong> what doesn&#39;t (platforms, formats)</li>
+<li><strong>Build</strong> proprietary tools (custom agents)</li>
+<li><strong>Plan</strong> Month 2 ( Days 31-60)</li>
+</ol>
+<h3>Content Experiment Board</h3>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Testing Week</th>
+<th>Decision Criteria</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Twitter threads</td>
+<td>Week 1-4</td>
+<td>Engagement rate</td>
+<td>Keep/Cut</td>
+</tr>
+<tr>
+<td>LinkedIn carousels</td>
+<td>Week 2-3</td>
+<td>LinkedIn analytics</td>
+<td>Test</td>
+</tr>
+<tr>
+<td>TikTok tutorials</td>
+<td>Week 1-4</td>
+<td>View completion</td>
+<td>Keep</td>
+</tr>
+<tr>
+<td>YouTube shorts</td>
+<td>Week 2-4</td>
+<td>CTR</td>
+<td>Evaluate</td>
+</tr>
+<tr>
+<td>Substack deep-dives</td>
+<td>Week 1-4</td>
+<td>Open rate</td>
+<td>Keep</td>
+</tr>
+</tbody></table>
+<h3>Month 2 Planning (Days 28-30)</h3>
+<p><strong>Jim drafts:</strong></p>
+<ul>
+<li>Month 2 content themes</li>
+<li>Revenue model exploration</li>
+<li>Partnership opportunities</li>
+</ul>
+<p><strong>Al builds:</strong></p>
+<ul>
+<li>Custom compute stack plan</li>
+<li>Advanced agent workflows</li>
+<li>Automated reporting system</li>
+</ul>
+<hr>
+<h2>Daily Content Machine Architecture</h2>
+<h3>Input Layer</h3>
+<ul>
+<li>Trends (TrendTracker)</li>
+<li>User prompts (Jim)</li>
+<li>Community feedback</li>
+<li>Platform analytics</li>
+</ul>
+<h3>Processing Layer</h3>
+<ul>
+<li>ContentCreator agent</li>
+<li>Template matching</li>
+<li>Draft generation</li>
+<li>Jim review/approval</li>
+</ul>
+<h3>Output Layer</h3>
+<ul>
+<li>Twitter/X threads</li>
+<li>LinkedIn posts</li>
+<li>Substack newsletter</li>
+<li>YouTube videos</li>
+<li>TikTok shorts</li>
+</ul>
+<h3>Distribution Layer</h3>
+<ul>
+<li>Distributor agent</li>
+<li>Scheduling</li>
+<li>Cross-posting</li>
+<li>Link tracking</li>
+</ul>
+<h3>Feedback Loop</h3>
+<ul>
+<li>Analytics agent</li>
+<li>Daily metrics</li>
+<li>Weekly review</li>
+<li>Continuous iteration</li>
+</ul>
+<hr>
+<h2>Research Queue — Active Topics</h2>
+<p><strong>Daily Scan:</strong></p>
+<ol>
+<li>OpenClaw releases and updates</li>
+<li>Anthropic/Claude announcements</li>
+<li>OpenAI API changes</li>
+<li>Local LLaMA ecosystem</li>
+<li>AI agent frameworks (LangChain, etc.)</li>
+</ol>
+<p><strong>Weekly Deep-Dives:</strong></p>
+<ol>
+<li>One major tool evaluation</li>
+<li>One monetization strategy</li>
+<li>One community case study</li>
+</ol>
+<p><strong>Opportunistic:</strong></p>
+<ol>
+<li>Breaking AI news</li>
+<li>Tool comparisons</li>
+<li>Workflow showcases</li>
+</ol>
+<hr>
+<h2>Metrics Dashboard (From Day 5)</h2>
+<p><strong>Daily Metrics:</strong></p>
+<ul>
+<li>Content pieces published</li>
+<li>Engagement rate per platform</li>
+<li>New followers/subscribers</li>
+<li>Website visits</li>
+</ul>
+<p><strong>Weekly Metrics:</strong></p>
+<ul>
+<li>Total engagement</li>
+<li>Follower growth rate</li>
+<li>Top performing content</li>
+<li>Agent system health</li>
+</ul>
+<p><strong>Monthly Metrics:</strong></p>
+<ul>
+<li>Cumulative reach</li>
+<li>Revenue (when applicable)</li>
+<li>Cost per piece</li>
+<li>ROI per channel</li>
+</ul>
+<hr>
+<h2>&quot;Building the Machine is Content&quot; — Content Calendar</h2>
+<h3>Every Agent Deployment = Content</h3>
+<table>
+<thead>
+<tr>
+<th>Deployment</th>
+<th>Content Piece</th>
+<th>Channel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Webby launch</td>
+<td>&quot;Meet Webby — my webmaster agent&quot;</td>
+<td>Twitter thread + blog</td>
+</tr>
+<tr>
+<td>TrendTracker</td>
+<td>&quot;How I automate research&quot;</td>
+<td>YouTube tutorial</td>
+</tr>
+<tr>
+<td>ContentCreator</td>
+<td>&quot;AI writes my content drafts&quot;</td>
+<td>TikTok demo</td>
+</tr>
+<tr>
+<td>Distributor</td>
+<td>&quot;Cross-posting automation&quot;</td>
+<td>LinkedIn article</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>&quot;My AI tracks my metrics&quot;</td>
+<td>Dashboard walkthrough</td>
+</tr>
+</tbody></table>
+<h3>Every Tool Built = Tutorial</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Tutorial Title</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dashboard</td>
+<td>&quot;Build a project dashboard in 10 min&quot;</td>
+<td>YouTube</td>
+</tr>
+<tr>
+<td>Screenshot sync</td>
+<td>&quot;Auto-sync screenshots to Git&quot;</td>
+<td>Twitter code</td>
+</tr>
+<tr>
+<td>Doc renderer</td>
+<td>&quot;Render markdown in vanilla JS&quot;</td>
+<td>Blog post</td>
+</tr>
+<tr>
+<td>Agent spawner</td>
+<td>&quot;Spawn your first AI agent&quot;</td>
+<td>Deep-dive</td>
+</tr>
+</tbody></table>
+<h3>Every Failure = Learning Thread</h3>
+<p><strong>Planned failure documentation:</strong></p>
+<ul>
+<li>What we tried</li>
+<li>Why it didn&#39;t work</li>
+<li>What we learned</li>
+<li>What we changed</li>
+</ul>
+<hr>
+<p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Review:</strong> Daily at 6 AM<br><strong>Owner:</strong> Jim + Al (shared)</p>
+</div><div class="doc-content content-display " id="doc-AGENT-TEAM-ROSTER-md"><h1>Agent Team Roster — Al Does AI</h1>
+<p><strong>The machine that builds the content.</strong></p>
+<hr>
+<h2>Active Agents</h2>
+<h3>🕸️ Webby — Webmaster Agent</h3>
+<p><strong>Status:</strong> ✅ <strong>DEPLOYED</strong> (March 5, 2026)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>🕸️</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Site maintenance, dashboard updates</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 6:00 AM EST</td>
+</tr>
+<tr>
+<td>Tasks</td>
+<td>Screenshot sync, dashboard rebuild, git commits</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Current dashboard</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td><code>.agents/webby/</code></td>
+</tr>
+</tbody></table>
+<p><strong>Health:</strong> ✅ Operational<br><strong>Last Run:</strong> Today, 12:47 PM<br><strong>Next Action:</strong> Continue daily maintenance</p>
+<hr>
+<h2>Planned Agents (Deployment Queue)</h2>
+<h3>🔍 TrendTracker — Research Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 15)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>🔍</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Morning research digest</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 6:00 AM EST (before Webby)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Scan 5+ sources (OpenClaw, Anthropic, OpenAI, r/LocalLLaMA, HN)</li>
+<li>Identify 3 trending topics worth noting</li>
+<li>Suggest 1 content opportunity for today</li>
+<li>Compile into morning digest</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>Daily research report (markdown)</li>
+<li>Trending topics queue</li>
+<li>Content opportunity alert</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Week 2 content baseline established</li>
+<li><input disabled="" type="checkbox"> Research sources defined</li>
+<li><input disabled="" type="checkbox"> Digest template approved by Jim</li>
+</ul>
+<hr>
+<h3>✍️ ContentCreator — Draft Generation Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 16)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>✍️</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Generate content drafts from templates</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 7:00 AM EST (after TrendTracker)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Pull from CONTENT_TEMPLATES.md</li>
+<li>Match template to trend/topic</li>
+<li>Generate 3 daily post drafts</li>
+<li>Queue for Jim approval</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>3 draft posts per day</li>
+<li>Linked to templates</li>
+<li>With suggested hashtags</li>
+<li>Ready for review</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Template library complete</li>
+<li><input disabled="" type="checkbox"> Voice/tone guidelines documented</li>
+<li><input disabled="" type="checkbox"> Approval workflow defined</li>
+</ul>
+<hr>
+<h3>📤 Distributor — Cross-Platform Posting Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 17)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>📤</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Schedule and post content across platforms</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Per content calendar (multiple times/day)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Queue approved content</li>
+<li>Format per platform</li>
+<li>Schedule optimal times</li>
+<li>Track post status</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>Twitter/X posts</li>
+<li>LinkedIn posts</li>
+<li>TikTok uploads</li>
+<li>YouTube scheduling</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Platform APIs accessible</li>
+<li><input disabled="" type="checkbox"> Scheduling rules defined</li>
+<li><input disabled="" type="checkbox"> Jim approves auto-post for Tier 1 content</li>
+</ul>
+<hr>
+<h3>📊 Analytics — Metrics Tracking Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>QUEUED</strong> (Deploy: Day 18)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>📊</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Track and report performance metrics</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>Daily 6 PM EST (end-of-day), Weekly Sundays</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Collect metrics from all platforms</li>
+<li>Calculate engagement rates</li>
+<li>Identify top-performing content</li>
+<li>Generate daily + weekly reports</li>
+</ul>
+<p><strong>Outputs:</strong></p>
+<ul>
+<li>Daily metrics dashboard</li>
+<li>Weekly performance report</li>
+<li>Trend analysis</li>
+<li>Recommendations</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Analytics accounts set up</li>
+<li><input disabled="" type="checkbox"> KPIs defined with Jim</li>
+<li><input disabled="" type="checkbox"> Report format approved</li>
+</ul>
+<hr>
+<h3>🎬 VideoEditor — Content Production Agent</h3>
+<p><strong>Status:</strong> ⏳ <strong>BACKLOG</strong> (Deploy: Month 2)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owner</td>
+<td>Al</td>
+</tr>
+<tr>
+<td>Emoji</td>
+<td>🎬</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Produce short-form video content</td>
+</tr>
+<tr>
+<td>Schedule</td>
+<td>As needed (3x/week initially)</td>
+</tr>
+</tbody></table>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Edit screen recordings</li>
+<li>Add captions/graphics</li>
+<li>Generate TikTok/YouTube Shorts</li>
+<li>Sync with ContentCreator</li>
+</ul>
+<p><strong>Deploy Criteria:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Video editing library/integration</li>
+<li><input disabled="" type="checkbox"> Style guidelines set</li>
+<li><input disabled="" type="checkbox"> Workflow with Jim approved</li>
+</ul>
+<hr>
+<h2>Deployment Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Day</th>
+<th>Agent</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>W1</td>
+<td>5</td>
+<td>Webby</td>
+<td>✅ DEPLOYED</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>15</td>
+<td>TrendTracker</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>16</td>
+<td>ContentCreator</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>17</td>
+<td>Distributor</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>18</td>
+<td>Analytics</td>
+<td>Deploy spec → run</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>19</td>
+<td>—</td>
+<td>Integration testing</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>20</td>
+<td>—</td>
+<td>Tuning based on data</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>21</td>
+<td>All</td>
+<td>Review + iterate</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>22+</td>
+<td>VideoEditor</td>
+<td>Spec → prototype</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Agent Communication Protocol</h2>
+<h3>Daily Handoff Chain</h3>
+<pre><code>06:00 — TrendTracker delivers digest
+06:05 — Webby updates dashboard (includes digest)
+07:00 — ContentCreator generates drafts
+07:30 — Jim reviews drafts
+08:00 — Distributor schedules approved content
+18:00 — Analytics collects daily data
+18:05 — Webby updates with metrics
+</code></pre>
+<h3>Inter-Agent Messages</h3>
+<p><strong>Standard format:</strong></p>
+<pre><code>FROM: AgentName
+TO: AgentName
+TASK: What to do
+DATA: {structured data}
+DEADLINE: When
+PRIORITY: High/Med/Low
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>FROM: TrendTracker
+TO: ContentCreator
+TASK: Generate thread on trending topic
+DATA: { topic: &quot;Claude 3.5&quot;, angle: &quot;comparison&quot;, template: &quot;vs&quot; }
+DEADLINE: 07:00
+PRIORITY: High
+</code></pre>
+<hr>
+<h2>Human Oversight</h2>
+<h3>Jim&#39;s Role</h3>
+<ul>
+<li><strong>Approve</strong> all agent-generated content before publish</li>
+<li><strong>Review</strong> daily digests and weekly reports</li>
+<li><strong>Intervene</strong> when agent output off-brand</li>
+<li><strong>Iterate</strong> on agent specs based on results</li>
+</ul>
+<h3>Al&#39;s Role</h3>
+<ul>
+<li><strong>Build</strong> agent specs and deploy</li>
+<li><strong>Monitor</strong> agent health and performance</li>
+<li><strong>Debug</strong> when agents fail or produce poor output</li>
+<li><strong>Scale</strong> agent team based on workload</li>
+</ul>
+<hr>
+<h2>Success Metrics (Per Agent)</h2>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Primary Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Webby</td>
+<td>Uptime</td>
+<td>99%</td>
+</tr>
+<tr>
+<td>TrendTracker</td>
+<td>Relevant trends caught</td>
+<td>5/day</td>
+</tr>
+<tr>
+<td>ContentCreator</td>
+<td>Drafts accepted</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>Distributor</td>
+<td>On-time posts</td>
+<td>95%</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>Report accuracy</td>
+<td>100%</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Review:</strong> Weekly (Sundays)<br><strong>Owner:</strong> Al (builds), Jim (approves)</p>
+</div><div class="doc-content content-display " id="doc-COMPREHENSIVE-DIGITAL-REAL-ESTATE-md"><h1>COMPREHENSIVE Digital Real Estate Acquisition Plan</h1>
 <p><strong>Project:</strong> Al Does AI<br><strong>Strategy:</strong> Defensive Registration — Secure ALL handles before anyone else<br><strong>Budget:</strong> $200-500 total (domains + minimal services)<br><strong>Timeline:</strong> 48 hours for critical, 30 days for complete sweep</p>
 <hr>
 <h2>Philosophy</h2>
@@ -1463,6 +4269,349 @@
 </ul>
 <hr>
 <p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Update:</strong> After Day 1 sprint complete</p>
+</div><div class="doc-content content-display " id="doc-CONTENT-CALENDAR-md"><h1>Content Calendar — Al Does AI</h1>
+<p><strong>Daily, weekly, and monthly content schedule with templates.</strong></p>
+<hr>
+<h2>Daily Rhythm</h2>
+<h3>Morning (7-9 AM EST)</h3>
+<p><strong>Platform:</strong> Twitter/X
+<strong>Format:</strong> Thread or standalone
+<strong>Template:</strong> Educational or behind-the-scenes
+<strong>Tone:</strong> Conversational, specific, no jargon</p>
+<h3>Midday (12-1 PM EST)</h3>
+<p><strong>Platform:</strong> Twitter/X
+<strong>Format:</strong> Engagement or quick win
+<strong>Template:</strong> Reply to comments, share progress
+<strong>Tone:</strong> Responsive, personal</p>
+<h3>Evening (6-7 PM EST)</h3>
+<p><strong>Platform:</strong> LinkedIn (2x/week), TikTok (3x/week)
+<strong>Format:</strong> Thought leadership or quick demo
+<strong>Template:</strong> Professional insight or tutorial
+<strong>Tone:</strong> Structured, value-first</p>
+<hr>
+<h2>Weekly Schedule</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Morning</th>
+<th>Midday</th>
+<th>Evening</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mon</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>—</td>
+<td>Week kickoff</td>
+</tr>
+<tr>
+<td><strong>Tue</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>LinkedIn</td>
+<td>B2B angle</td>
+</tr>
+<tr>
+<td><strong>Wed</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>TikTok</td>
+<td>Quick wins</td>
+</tr>
+<tr>
+<td><strong>Thu</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>LinkedIn</td>
+<td>Strategy</td>
+</tr>
+<tr>
+<td><strong>Fri</strong></td>
+<td>Twitter thread</td>
+<td>Engage</td>
+<td>TikTok</td>
+<td>Week recap</td>
+</tr>
+<tr>
+<td><strong>Sat</strong></td>
+<td>—</td>
+<td>—</td>
+<td>YouTube</td>
+<td>Deep tutorial</td>
+</tr>
+<tr>
+<td><strong>Sun</strong></td>
+<td>—</td>
+<td>—</td>
+<td>Substack</td>
+<td>Weekly synthesis</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Content Types by Template</h2>
+<h3>1. Daily Twitter Thread — &quot;Today I Learned&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>🧵 Day X: [Specific thing learned/did]
+
+1/n The journey so far...
+
+[Context]
+
+2/n What surprised me:
+
+[Unexpected finding]
+
+3/n What I built:
+
+[Specific output with images]
+
+[n/n] Follow for daily updates. Tomorrow: [Tease next day]
+</code></pre>
+<p><strong>Frequency:</strong> Daily
+<strong>Avg length:</strong> 5-7 tweets
+<strong>Hashtags:</strong> #AlDoesAI #[SpecificTopic]</p>
+<h3>2. LinkedIn Long-Form — &quot;The Bigger Picture&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>I&#39;m documenting a 180-day experiment:
+
+→ Can AI agents run a content business?
+→ Total transparency (every prompt, every $)
+→ Starting from $0
+
+This week I learned [specific insight].
+
+The shift from [old way] to [new way] revealed [surprising truth].
+
+Here&#39;s what I&#39;m changing going forward:
+
+[3 specific adjustments]
+
+If you&#39;re building with AI, what&#39;s your biggest lesson so far?
+
+#AI #BuildingInPublic #AlDoesAI
+</code></pre>
+<p><strong>Frequency:</strong> 2x/week
+<strong>Length:</strong> 150-300 words
+<strong>CTA:</strong> Engagement question</p>
+<h3>3. Substack Deep-Dive — &quot;The Weekly Synthesis&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code># Week X: [Theme]
+
+## The Numbers
+- Prompts: X
+- Time invested: Y hours  
+- Money spent: $Z
+- [Specific metric]
+
+## What Worked
+[3 things with screenshots]
+
+## What Didn&#39;t
+[2 things with honest reflection]
+
+## This Week&#39;s Build
+[Specific agent/tool built]
+
+## Next Week Preview
+[What&#39;s coming + why it matters]
+
+---
+*Reply to share your own week*
+</code></pre>
+<p><strong>Frequency:</strong> Weekly (Sunday)
+<strong>Length:</strong> 800-1500 words
+<strong>Include:</strong> Screenshots, metrics, links</p>
+<h3>4. YouTube Tutorial — &quot;Build With Me&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>[Hook: Problem]
+
+&quot;You want to track 50 data sources but don&#39;t have time to check them all.&quot;
+
+[Solution preview]
+
+&quot;I built an agent that does this automatically.&quot;
+
+[Screen recording]
+
+- Step 1: [Action]
+- Step 2: [Action]  
+- Step 3: [Action]
+
+[Result]
+
+&quot;This saves me 2 hours/day.&quot;
+
+[CTA]
+
+&quot;What would you automate? Comment below.&quot;
+</code></pre>
+<p><strong>Frequency:</strong> 1x/week (Saturday)
+<strong>Length:</strong> 5-15 minutes
+<strong>Format:</strong> Screen recording + voiceover</p>
+<h3>5. TikTok Quick Win — &quot;90-Second Tutorial&quot;</h3>
+<p><strong>Template:</strong></p>
+<pre><code>[0-3s Hook]
+Text: &quot;Stop doing [manual task]&quot;
+
+[3-30s Problem]
+&quot;I used to spend X hours on Y&quot;
+
+[30-60s Solution]
+Quick demo of agent/tool
+
+[60-85s Result]
+&quot;Now it takes Z seconds&quot;
+
+[85-90s CTA]
+&quot;Follow for more AI automations&quot;
+</code></pre>
+<p><strong>Frequency:</strong> 3x/week (MWF)
+<strong>Length:</strong> 60-90 seconds
+<strong>Format:</strong> Screen recording or face to camera</p>
+<hr>
+<h2>Template Library</h2>
+<h3>Educational Threads</h3>
+<ul>
+<li>&quot;How X works&quot; (explainer)</li>
+<li>&quot;X vs Y&quot; (comparison)</li>
+<li>&quot;The anatomy of X&quot; (breakdown)</li>
+</ul>
+<h3>Behind-the-Scenes</h3>
+<ul>
+<li>&quot;Building [thing] in public&quot;</li>
+<li>&quot;What broke today&quot;</li>
+<li>&quot;Agent conversation logs&quot;</li>
+</ul>
+<h3>Progress Updates</h3>
+<ul>
+<li>&quot;Day X: [what we built]&quot;</li>
+<li>&quot;Month X: [cumulative learnings]&quot;</li>
+<li>&quot;Milestone: [specific achievement]&quot;</li>
+</ul>
+<h3>Thought Leadership</h3>
+<ul>
+<li>&quot;The future of [topic]&quot;</li>
+<li>&quot;Why [common belief] is wrong&quot;</li>
+<li>&quot;Prediction: [future state]&quot;</li>
+</ul>
+<hr>
+<h2>Content Ideas (30-Day Buffer)</h2>
+<h3>Week 1 Ideas</h3>
+<ul>
+<li>&quot;Day 1: $0 to launch in 24 hours&quot;</li>
+<li>&quot;How I&#39;m documenting my entire AI journey&quot;</li>
+<li>&quot;The 15 handles I registered (and why)&quot;</li>
+<li>&quot;Building a content machine: First principles&quot;</li>
+</ul>
+<h3>Week 2 Ideas</h3>
+<ul>
+<li>&quot;Agent #1: Meet Webby (my webmaster)&quot;</li>
+<li>&quot;Automating research: My morning digest&quot;</li>
+<li>&quot;I built an agent to write my content&quot;</li>
+<li>&quot;Cross-posting without losing your soul&quot;</li>
+</ul>
+<h3>Week 3 Ideas</h3>
+<ul>
+<li>&quot;My agent team (now at 5)&quot;</li>
+<li>&quot;Which content performs best? (Week 2 analysis)&quot;</li>
+<li>&quot;Building analytics that matter&quot;</li>
+<li>&quot;From 0 to [X followers] in 21 days&quot;</li>
+</ul>
+<h3>Week 4 Ideas</h3>
+<ul>
+<li>&quot;What I cut after testing everything&quot;</li>
+<li>&quot;Month 1: The honest numbers&quot;</li>
+<li>&quot;Building my own compute stack&quot;</li>
+<li>&quot;What Month 2 will bring&quot;</li>
+</ul>
+<hr>
+<h2>Cross-Platform Strategy</h2>
+<h3>Twitter → Substack</h3>
+<ul>
+<li>Thread becomes newsletter intro</li>
+<li>Link from Twitter bio</li>
+<li>&quot;Full deep-dive in bio&quot;</li>
+</ul>
+<h3>Substack → Twitter</h3>
+<ul>
+<li>Extract 3-5 tweet threads</li>
+<li>Quote-tweet with commentary</li>
+<li>&quot;From this week&#39;s newsletter...&quot;</li>
+</ul>
+<h3>YouTube → All Platforms</h3>
+<ul>
+<li>Short clips for TikTok</li>
+<li>Key quotes for Twitter</li>
+<li>Thumbnail + link for LinkedIn</li>
+</ul>
+<h3>TikTok → Twitter/YouTube</h3>
+<ul>
+<li>Compile &quot;best of&quot; weekly</li>
+<li>Reply to comments on Twitter</li>
+<li>Full tutorial on YouTube</li>
+</ul>
+<hr>
+<h2>Content Production Workflow</h2>
+<h3>Daily (Jim + Al)</h3>
+<p><strong>6 AM — Trend Review</strong></p>
+<ul>
+<li>Al: Deliver trend digest</li>
+<li>Jim: Review, identify angle</li>
+</ul>
+<p><strong>7 AM — Morning Content</strong></p>
+<ul>
+<li>Al: Draft thread from template</li>
+<li>Jim: Review, edit, approve</li>
+<li>Al: Schedule/post</li>
+</ul>
+<p><strong>9 AM — Midday Check</strong></p>
+<ul>
+<li>Al: Monitor engagement</li>
+<li>Jim: Reply to key comments</li>
+</ul>
+<p><strong>12 PM — Secondary Content</strong></p>
+<ul>
+<li>Al: Draft LinkedIn or TikTok</li>
+<li>Jim: Quick review</li>
+<li>Al: Distribute</li>
+</ul>
+<p><strong>6 PM — Evening Content</strong></p>
+<ul>
+<li>Al: Prepare next day drafts</li>
+<li>Jim: Review queue</li>
+<li>Al: Schedule</li>
+</ul>
+<h3>Weekly (Sunday Deep-Dive)</h3>
+<p><strong>Morning:</strong></p>
+<ul>
+<li>Al: Compile week metrics</li>
+<li>Al: Draft Substack post</li>
+</ul>
+<p><strong>Afternoon:</strong></p>
+<ul>
+<li>Jim: Review, add personal reflections</li>
+<li>Jim: Record video component</li>
+</ul>
+<p><strong>Evening:</strong></p>
+<ul>
+<li>Al: Format, add screenshots</li>
+<li>Al: Publish Substack</li>
+<li>Al: Distribute across channels</li>
+</ul>
+<hr>
+<h2>Scheduling Rules</h2>
+<ol>
+<li><strong>Never batch more than 3 days ahead</strong> — stay responsive</li>
+<li><strong>Always have 1 day buffer</strong> — for breaking news/opportunities  </li>
+<li><strong>Jim approves all drafted content</strong> — maintain human voice</li>
+<li><strong>Test one new format per week</strong> — controlled experimentation</li>
+<li><strong>Document what works</strong> — update templates monthly</li>
+</ol>
+<hr>
+<p><strong>Last Updated:</strong> March 5, 2026<br><strong>Next Review:</strong> Weekly, Sundays</p>
 </div><div class="doc-content content-display " id="doc-CONTENT-TEMPLATES-md"><h1>Al Does AI — Content Templates</h1>
 <p><strong>Standard formats for each platform.</strong></p>
 <hr>
@@ -2656,6 +5805,306 @@ Full transparency. Full accountability.
 </ol>
 <hr>
 <p><strong>Last Updated:</strong> March 5, 2026 08:12 EST<br><strong>Next Update:</strong> After Jim completes manual checks</p>
+</div><div class="doc-content content-display " id="doc-RESEARCH-TOPICS-md"><h1>Research Topics — Active Queue</h1>
+<p><strong>What we&#39;re tracking. Why. How we use it.</strong></p>
+<hr>
+<h2>Daily Scan Sources</h2>
+<h3>1. OpenClaw Ecosystem</h3>
+<p><strong>Source:</strong> <a href="https://github.com/openclaw/openclaw/releases">https://github.com/openclaw/openclaw/releases</a><br><strong>Frequency:</strong> Daily<br><strong>Why:</strong> Our core platform — new features directly applicable<br><strong>Action:</strong> Document new capabilities, test immediately, share learnings</p>
+<h3>2. Anthropic/Claude Updates</h3>
+<p><strong>Source:</strong> <a href="https://www.anthropic.com/news">https://www.anthropic.com/news</a><br><strong>Frequency:</strong> Daily<br><strong>Why:</strong> Major model updates change what agents can do<br><strong>Action:</strong> Benchmark against current setup, evaluate upgrade path</p>
+<h3>3. OpenAI API Changes</h3>
+<p><strong>Source:</strong> <a href="https://openai.com/blog">https://openai.com/blog</a><br><strong>Frequency:</strong> Weekly + on major announcements<br><strong>Why:</strong> Keep current on capabilities, pricing<br><strong>Action:</strong> Cost comparison, feature gap analysis</p>
+<h3>4. r/LocalLLaMA</h3>
+<p><strong>Source:</strong> <a href="https://www.reddit.com/r/LocalLLaMA/">https://www.reddit.com/r/LocalLLaMA/</a><br><strong>Frequency:</strong> Daily (top posts)<br><strong>Why:</strong> Community discovers techniques before official docs<br><strong>Action:</strong> Identify emerging workflows, test promising approaches</p>
+<h3>5. Hacker News — AI Tag</h3>
+<p><strong>Source:</strong> <a href="https://news.ycombinator.com/tagged/AI">https://news.ycombinator.com/tagged/AI</a><br><strong>Frequency:</strong> Daily (top 10)<br><strong>Why:</strong> Technical community signals what&#39;s becoming mainstream<br><strong>Action:</strong> Track tool launches, integration opportunities</p>
+<h3>6. Twitter/X — AI Community</h3>
+<p><strong>Source:</strong> Following list: AI builders, researchers<br><strong>Frequency:</strong> Daily<br><strong>Why:</strong> Real-time sentiment, emerging patterns<br><strong>Action:</strong> Engage in conversations, identify collaboration opportunities</p>
+<h3>7. YouTube — AI Tutorial Channels</h3>
+<p><strong>Sources:</strong> Specific creators, trending tutorials<br><strong>Frequency:</strong> Weekly<br><strong>Why:</strong> See what&#39;s popular in educational content<br><strong>Action:</strong> Identify content gaps we can fill</p>
+<h3>8. Discord — AI Communities</h3>
+<p><strong>Servers:</strong> OpenClaw, LocalLLaMA, etc.<br><strong>Frequency:</strong> Daily (key channels)<br><strong>Why:</strong> Insider knowledge, troubleshooting patterns<br><strong>Action:</strong> Learn from others&#39; failures, share our wins</p>
+<hr>
+<h2>Topic Categories</h2>
+<h3>Category A: Tools &amp; Infrastructure</h3>
+<p><strong>What:</strong> New agent frameworks, hosting options, APIs<br><strong>Tracked:</strong></p>
+<ul>
+<li>LangChain updates</li>
+<li>LlamaIndex releases</li>
+<li>New hosting providers (Replicate, Together, etc.)</li>
+<li>Cost reductions in compute</li>
+</ul>
+<p><strong>Content Opportunity:</strong> Tool evaluation posts, migration guides</p>
+<h3>Category B: Workflows &amp; Techniques</h3>
+<p><strong>What:</strong> Novel patterns for AI-human collaboration<br><strong>Tracked:</strong></p>
+<ul>
+<li>Prompt engineering techniques</li>
+<li>Multi-agent orchestration</li>
+<li>Human-in-the-loop patterns</li>
+<li>Failure recovery strategies</li>
+</ul>
+<p><strong>Content Opportunity:</strong> &quot;How we implemented X&quot; tutorials</p>
+<h3>Category C: Monetization &amp; Business</h3>
+<p><strong>What:</strong> Revenue models, pricing strategies, market trends<br><strong>Tracked:</strong></p>
+<ul>
+<li>AI SaaS pricing changes</li>
+<li>New monetization platforms</li>
+<li>Success stories/breakdowns</li>
+<li>Market size reports</li>
+</ul>
+<p><strong>Content Opportunity:</strong> Business model analysis, revenue projections</p>
+<h3>Category D: Community &amp; Culture</h3>
+<p><strong>What:</strong> Shifting norms, concerns, excitement in AI space<br><strong>Tracked:</strong></p>
+<ul>
+<li>Regulatory developments</li>
+<li>Ethical discussions</li>
+<li>&quot;Vibe shift&quot; indicators</li>
+<li>Mainstream adoption signals</li>
+</ul>
+<p><strong>Content Opportunity:</strong> Thought leadership, trend commentary</p>
+<hr>
+<h2>Research Queue</h2>
+<h3>Active (Being Tracked Now)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Category</th>
+<th>Source</th>
+<th>Priority</th>
+<th>Content Angle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Claude 3.5 vs GPT-4o</td>
+<td>A</td>
+<td>Anthropic blog</td>
+<td>High</td>
+<td>Comparison thread</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OpenClaw subagent patterns</td>
+<td>A</td>
+<td>GitHub releases</td>
+<td>High</td>
+<td>Tutorial video</td>
+</tr>
+<tr>
+<td>3</td>
+<td>r/LocalLLaMA weekly highlights</td>
+<td>B</td>
+<td>Reddit</td>
+<td>Medium</td>
+<td>Community digest</td>
+</tr>
+<tr>
+<td>4</td>
+<td>AI agent ROI benchmarks</td>
+<td>C</td>
+<td>Hacker News</td>
+<td>Medium</td>
+<td>Business case study</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Mainstream awareness shift</td>
+<td>D</td>
+<td>Twitter sentiment</td>
+<td>Low</td>
+<td>Trend analysis</td>
+</tr>
+</tbody></table>
+<h3>Queued (To Track Next)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Category</th>
+<th>Source</th>
+<th>Priority</th>
+<th>Content Angle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6</td>
+<td>Multimodal agent workflows</td>
+<td>B</td>
+<td>YouTube tutorials</td>
+<td>Medium</td>
+<td>Demo video</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Compute cost trends 2024-2025</td>
+<td>C</td>
+<td>Industry reports</td>
+<td>Low</td>
+<td>Cost analysis</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Open source vs closed model debate</td>
+<td>D</td>
+<td>Twitter/HN</td>
+<td>Medium</td>
+<td>Opinion piece</td>
+</tr>
+</tbody></table>
+<h3>Saved (Track Later)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Category</th>
+<th>Why Waiting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>9</td>
+<td>EU AI Act implications</td>
+<td>D</td>
+<td>Wait for implementation</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Enterprise agent adoption</td>
+<td>C</td>
+<td>Wait for case studies</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Daily Research Workflow</h2>
+<h3>TrendTracker Agent Process (Starting Day 15)</h3>
+<p><strong>06:00 — Scan Phase (15 min)</strong></p>
+<ul>
+<li>Check all 8 sources</li>
+<li>Flag 5+ interesting items</li>
+<li>Capture relevant links/quotes</li>
+</ul>
+<p><strong>06:15 — Filter Phase (10 min)</strong></p>
+<ul>
+<li>Prioritize by relevance to Al Does AI</li>
+<li>Select top 3 for note-taking</li>
+<li>Discard or save rest</li>
+</ul>
+<p><strong>06:25 — Digest Phase (15 min)</strong></p>
+<ul>
+<li>Write brief summary of each</li>
+<li>Identify 1 content opportunity</li>
+<li>Format as morning report</li>
+</ul>
+<p><strong>06:40 — Delivery Phase (5 min)</strong></p>
+<ul>
+<li>Post to research channel</li>
+<li>Notify Jim</li>
+<li>Queue for dashboard update</li>
+</ul>
+<h3>Jim&#39;s Review (Morning)</h3>
+<p><strong>Priority Check:</strong></p>
+<ol>
+<li>Urgent: Breaking news, immediate opportunity</li>
+<li>Important: Trending topic, content relevant</li>
+<li>Interesting: Background info, save for later</li>
+</ol>
+<p><strong>Action Options:</strong></p>
+<ul>
+<li>🚀 Act on today (content piece)</li>
+<li>📌 Save for Week 1/2/3/4</li>
+<li>🗑️ Ignore (mark complete)</li>
+<li>🔍 Deep dive (schedule research)</li>
+</ul>
+<hr>
+<h2>Research → Content Pipeline</h2>
+<h3>Conversion Rules</h3>
+<p><strong>Research Finding → Content Type</strong></p>
+<table>
+<thead>
+<tr>
+<th>Finding Type</th>
+<th>Convert To</th>
+<th>Timeline</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tool launch</td>
+<td>Review + Tutorial</td>
+<td>2-3 days</td>
+</tr>
+<tr>
+<td>Technique discovery</td>
+<td>How-to thread</td>
+<td>Same day</td>
+</tr>
+<tr>
+<td>Trend emerging</td>
+<td>Analysis post</td>
+<td>1-2 days</td>
+</tr>
+<tr>
+<td>Data/statistics</td>
+<td>Infographic</td>
+<td>3-5 days</td>
+</tr>
+<tr>
+<td>Failure/cautionary</td>
+<td>Honest reflection</td>
+<td>1 day</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Research Artifacts</h2>
+<p><strong>Daily Output:</strong></p>
+<ul>
+<li><code>research/daily/YYYY-MM-DD-trend-report.md</code></li>
+<li>Top 5 findings</li>
+<li>1 actionable opportunity</li>
+<li>Links to sources</li>
+</ul>
+<p><strong>Weekly Output:</strong></p>
+<ul>
+<li>Synthesis for Substack</li>
+<li>&quot;What we learned this week&quot;</li>
+<li>Trend predictions</li>
+</ul>
+<p><strong>Monthly Output:</strong></p>
+<ul>
+<li>Research methodology review</li>
+<li>Source effectiveness audit</li>
+<li>Topic priority adjustment</li>
+</ul>
+<hr>
+<h2>Research Quality Standards</h2>
+<h3>Good Research Signal</h3>
+<p>✅ Specific numbers, not vague claims<br>✅ Multiple sources confirming<br>✅ Directly applicable to our work<br>✅ Actionable insight<br>✅ Timely (not outdated)</p>
+<h3>Bad Research Signal</h3>
+<p>❌ Unverified claims<br>❌ Too theoretical/distant<br>❌ Duplicate of known info<br>❌ No clear application<br>❌ Stale (&gt;1 week for fast-moving topics)</p>
+<hr>
+<h2>Tools for Research</h2>
+<p><strong>Current:</strong></p>
+<ul>
+<li>Manual browsing of sources</li>
+<li>Bookmarking interesting finds</li>
+</ul>
+<p><strong>Week 2-3:</strong></p>
+<ul>
+<li>TrendTracker agent automation</li>
+<li>RSS aggregation</li>
+<li>Twitter list monitoring</li>
+</ul>
+<p><strong>Month 2:</strong></p>
+<ul>
+<li>Custom scrapers for key sites</li>
+<li>Alert systems for breaking news</li>
+<li>Cross-reference analysis</li>
+</ul>
+<hr>
+<p><strong>Owner:</strong> TrendTracker agent (Day 15+)<br><strong>Daily Review:</strong> Jim + Al<br><strong>Last Updated:</strong> March 5, 2026</p>
 </div><div class="doc-content content-display " id="doc-TEMPLATE-md"><h1>Conversation Template</h1>
 <p><strong>Date:</strong> YYYY-MM-DD<br><strong>Time:</strong> HH:MM EST → HH:MM EST<br><strong>Duration:</strong> X minutes<br><strong>Participants:</strong> Jim (human), Al (AI)<br><strong>Prompt Number:</strong> ###</p>
 <hr>
@@ -2842,6 +6291,207 @@ Full transparency. Full accountability.
 <hr>
 <p><strong>Prompt stored:</strong> March 5, 2026 07:54 EST
 <strong>Next prompt:</strong> Day 2, March 6, 2026</p>
+</div><div class="doc-content content-display " id="doc-content-DAY-01-DRAFT-FRAMEWORK-md"><h1>Day 1 Content — Draft Framework</h1>
+<p><strong>Waiting for Jim&#39;s thoughts. Here&#39;s the scaffolding.</strong></p>
+<hr>
+<h2>Jim&#39;s Input Section</h2>
+<p><em>[Jim to write: What do you want people to know about Day 1? What feeling should they have? What&#39;s the hook that makes them follow along?]</em></p>
+<p><strong>Questions to answer:</strong></p>
+<ol>
+<li>Why are you doing this publicly?</li>
+<li>What do you hope people learn?</li>
+<li>What&#39;s different about your approach?</li>
+<li>What resistance/hesitation do you have?</li>
+<li>What would make this worth it?</li>
+</ol>
+<p><em>[Add here or tell me and I&#39;ll weave it in]</em></p>
+<hr>
+<h2>Content Strategy (Pending Jim Input)</h2>
+<h3>Suggested Formats for Day 1</h3>
+<p><strong>Option A: Vulnerable Launch</strong>
+<strong>Tone:</strong> &quot;I don&#39;t know if this will work, but here&#39;s why I&#39;m trying&quot;
+<strong>Platforms:</strong> Twitter thread (primary), Substack (deep-dive), LinkedIn (professional angle)
+<strong>Hook:</strong> The uncertainty + the why
+<strong>Risk Level:</strong> Medium (authentic but requires courage)</p>
+<p><strong>Option B: Vision-Forward</strong>
+<strong>Tone:</strong> &quot;Here&#39;s where we&#39;re going, come along&quot;
+<strong>Platforms:</strong> All platforms same message
+<strong>Hook:</strong> The 180-day promise
+<strong>Risk Level:</strong> Low (clear but less personal)</p>
+<p><strong>Option C: Behind-Scenes</strong>
+<strong>Tone:</strong> &quot;Here&#39;s how the sausage gets made&quot;
+<strong>Platforms:</strong> Twitter (thread), TikTok (video), YouTube (longer)
+<strong>Hook:</strong> The process itself
+<strong>Risk Level:</strong> Low (process is inherently interesting)</p>
+<h3>Channel Distribution</h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Day 1 Content</th>
+<th>Format</th>
+<th>Suggested Time</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Twitter/X</strong></td>
+<td>Primary launch thread</td>
+<td>10-tweet thread</td>
+<td>8 AM EST</td>
+</tr>
+<tr>
+<td><strong>LinkedIn</strong></td>
+<td>Professional version</td>
+<td>300-word post</td>
+<td>11 AM EST</td>
+</tr>
+<tr>
+<td><strong>Substack</strong></td>
+<td>Full founding story</td>
+<td>1000 words</td>
+<td>Evening</td>
+</tr>
+<tr>
+<td><strong>TikTok</strong></td>
+<td>&quot;Why I&#39;m doing this&quot;</td>
+<td>60-sec video</td>
+<td>3 PM EST</td>
+</tr>
+<tr>
+<td><strong>YouTube</strong></td>
+<td>Channel trailer</td>
+<td>2-min video</td>
+<td>Publish Sat</td>
+</tr>
+</tbody></table>
+<h3>Twitter Thread Structure (Draft Template)</h3>
+<pre><code>🧵 1/ I&#39;m starting something completely transparent.
+
+180 days. $0 to ? Building an AI-powered content business.
+Every prompt. Every dollar. Every failure. Public.
+
+Here&#39;s why: [Jim&#39;s reason]
+
+👇
+
+2/ The premise: Can AI agents actually run a business?
+
+Not &quot;help with.&quot; Not &quot;augment.&quot;
+Actually operate. Decide. Execute. Scale.
+
+I&#39;m going to find out. In public. With receipts.
+
+3/ The setup:
+→ Existing: Mac mini (owned)
+→ Spent: $0 (so far)
+→ Team: Me + an AI named Al
+→ Goal: $1K/mo by day 180
+
+Not venture-backed. Not mysterious.
+Just building.
+
+[SCREENSHOT: Dashboard showing $0]
+
+4/ Why document it?
+
+Because I want to know:
+→ What&#39;s real vs hype?
+→ What&#39;s easy vs hard?
+→ What&#39;s worth doing vs outsourcing?
+
+And because maybe it&#39;ll help someone else
+who&#39;s curious but doesn&#39;t know where to start.
+
+5/ What you&#39;ll see:
+
+Every prompt I give Al.
+Every mistake we make.
+Every tool we try.
+Every dollar we spend (and make).
+
+The good, bad, and awkward.
+
+6/ The skepticism:
+
+Maybe this is just content about content.
+Maybe AI can&#39;t actually run things.
+Maybe I waste 6 months.
+
+Valid concerns. Let&#39;s test them.
+
+7/ What &quot;success&quot; looks like:
+
+Day 30: First dollar
+Day 60: $100 total
+Day 90: Break even
+Day 180: $1K/month run rate
+
+Realistic? We&#39;ll see.
+
+8/ The machine:
+
+Already built:
+✅ Dashboard tracking everything
+✅ 6-agents planned
+✅ Content system
+
+More tomorrow. This is day 1.
+
+[SCREENSHOT: Task list]
+
+9/ Why you should follow:
+
+If you&#39;re:
+→ Building with AI
+→ Curious about what&#39;s possible
+→ Want honest documentation
+→ Like watching things get built
+
+This is for you.
+
+10/ Tomorrow: Day 2.
+
+Buying the domain.
+Registering 15 handles.
+Building the machine that builds the machine.
+
+Follow @AlDoesAI for the journey.
+
+[END THREAD]
+</code></pre>
+<hr>
+<h2>Suggested Content Snippets</h2>
+<h3>For TikTok (60 seconds)</h3>
+<p><strong>Hook (0-3s):</strong> <em>[Visual: $0 on screen]</em> &quot;Starting a business with $0.&quot;</p>
+<p><strong>Setup (3-15s):</strong> &quot;Not a course. Not a template. Just me documenting what happens when I try to build an AI-powered business from scratch.&quot;</p>
+<p><strong>The twist (15-30s):</strong> &quot;The AI isn&#39;t helping me. It&#39;s running the business. I&#39;m just... supervising?&quot;</p>
+<p><strong>The proof (30-50s):</strong> <em>[Quick cuts of dashboard, agents, work]</em> &quot;Every prompt, every dollar, every failure. Public.&quot;</p>
+<p><strong>CTA (50-60s):</strong> &quot;Day 1. Follow along.&quot;</p>
+<h3>For LinkedIn</h3>
+<p><strong>Professional angle:</strong> AI x entrepreneurship<br><strong>Focus:</strong> The experiment methodology, not just the content<br><strong>Audience:</strong> Other builders, operators, curious executives<br><strong>CTA:</strong> What&#39;s your biggest question about AI in business?</p>
+<h3>For Substack</h3>
+<p><strong>Format:</strong> Personal essay + technical appendix<br><strong>Sections:</strong></p>
+<ol>
+<li>The decision (why now?)</li>
+<li>The setup (what exists)</li>
+<li>The plan (30-day roadmap)</li>
+<li>The call (invitation to follow)
+<strong>Appendix:</strong> Technical details, links to dashboard, GitHub</li>
+</ol>
+<hr>
+<h2>Next Steps</h2>
+<p><strong>Once Jim provides input:</strong></p>
+<ol>
+<li>Al drafts full content for each platform</li>
+<li>Jim reviews/edits</li>
+<li>Schedule for Day 1 release</li>
+<li>Set up cross-posting</li>
+<li>Prepare follow-up engagement</li>
+</ol>
+<p><strong>Ready to build when Jim is.</strong></p>
+<hr>
+<p><strong>Status:</strong> AWAITING JIM&#39;S THOUGHTS<br><strong>Draft Due:</strong> Once Jim shares
+<strong>Publish:</strong> Day 1 (March 5, 2026)</p>
 </div><div class="doc-content content-display " id="doc-content-FULL-CONVERSATION-LOG-md"><h1>Conversation Log: All Exchanges</h1>
 <p><strong>Complete record of every exchange between Jim and Al during the Al Does AI project.</strong></p>
 <p><em>Last Updated: March 5, 2026 09:29 EST</em></p>
@@ -4013,48 +7663,61 @@ March 5-12, 2026</p>
   </main>
 
   <script>
-    const tasks = [
-      { id: 'domains', title: 'Register 3 Domains', desc: 'aldoesai.com, .net, .org at Cloudflare', time: '10 min', cost: '$28', link: 'https://dash.cloudflare.com' },
-      { id: 'twitter', title: 'Secure Twitter @AlDoesAI', desc: 'Create account and claim handle', time: '5 min', link: 'https://twitter.com' },
-      { id: 'instagram', title: 'Secure Instagram @aldoesai', desc: 'Via mobile app', time: '5 min', link: null },
-      { id: 'tiktok', title: 'Secure TikTok @aldoesai', desc: 'Via mobile app', time: '5 min', link: null },
-      { id: 'youtube', title: 'Create YouTube Channel', desc: '"Al Does AI" with @AlDoesAI handle', time: '10 min', link: 'https://youtube.com' },
-      { id: 'linkedin', title: 'Create LinkedIn Page', desc: 'For B2B presence', time: '10 min', link: 'https://linkedin.com' }
+    // Today's tasks
+    const jimTasks = [
+      { id: 'jim-domain', title: 'Buy aldoesai.com', time: '10 min', output: 'Domain secured' },
+      { id: 'jim-twitter', title: 'Register Twitter @AlDoesAI', time: '5 min', output: 'Handle claimed' },
+      { id: 'jim-insta', title: 'Register Instagram @aldoesai', time: '5 min', output: 'Handle claimed' },
+      { id: 'jim-tiktok', title: 'Register TikTok @aldoesai', time: '5 min', output: 'Handle claimed' },
+      { id: 'jim-youtube', title: 'Create YouTube channel', time: '10 min', output: 'Channel live' },
+      { id: 'jim-linkedin', title: 'Create LinkedIn page', time: '10 min', output: 'Page published' },
+      { id: 'jim-github', title: 'Create GitHub org "aldoesai"', time: '10 min', output: 'Org created' },
+      { id: 'jim-screenshots', title: 'Add screenshots to Documents/AlDoesAI/', time: 'ongoing', output: 'Visual log' }
+    ];
+    
+    const alTasks = [
+      { id: 'al-v4', title: 'Build dashboard v4', time: '2 hrs', output: 'Dashboard live', done: true },
+      { id: 'al-fix', title: 'Fix screenshot encoding', time: '30 min', output: 'Images render' },
+      { id: 'al-v5', title: 'Build dashboard v5', time: '3 hrs', output: 'New structure', done: true },
+      { id: 'al-plan', title: 'Create 30-day plan docs', time: '1 hr', output: 'Plan published', done: true },
+      { id: 'al-agents', title: 'Create agent roster', time: '30 min', output: 'Team defined', done: true },
+      { id: 'al-research', title: 'Create research topics', time: '30 min', output: 'Topics queued', done: true },
+      { id: 'al-calendar', title: 'Create content calendar', time: '30 min', output: 'Calendar linked', done: true }
     ];
 
     function renderTasks() {
-      const container = document.getElementById('task-list');
-      container.innerHTML = tasks.map(t => {
+      const jimContainer = document.getElementById('jim-tasks');
+      const alContainer = document.getElementById('al-tasks');
+      
+      jimContainer.innerHTML = jimTasks.map(t => {
         const isDone = localStorage.getItem('task_' + t.id) === 'true';
-        return `
-          <div class="task-item ${isDone ? 'completed' : ''}" data-task="${t.id}">
-            <div class="task-checkbox ${isDone ? 'checked' : ''}" onclick="toggleTask('${t.id}')"></div>
-            <div>
-              <div style="font-weight: 600;">${t.title}</div>
-              <div style="color: var(--text-muted); font-size: 0.9rem;">${t.desc}</div>
-              <div style="margin-top: 0.5rem; font-size: 0.85rem;">
-                <span style="background: rgba(245, 158, 11, 0.2); color: var(--accent); padding: 0.25rem 0.5rem; border-radius: 4px; margin-right: 0.5rem; display: inline-block;">⏱️ ${t.time}</span>
-                ${t.cost ? `<span style="color: var(--accent);">${t.cost}</span>` : ''}
-                ${t.link ? `<a href="${t.link}" target="_blank" style="color: var(--secondary); margin-left: 0.5rem;">Open →</a>` : ''}
-              </div>
-            </div>
-          </div>
-        `;
+        return '<div class="task-item ' + (isDone ? 'completed' : '') + ' jim">' +
+          '<div class="task-checkbox ' + (isDone ? 'checked' : '') + '" onclick="toggleTask(\'' + t.id + '\')"></div>' +
+          '<div>' +
+            '<div style="font-weight: 600;">' + t.title + '</div>' +
+            '<div style="color: var(--text-muted); font-size: 0.85rem;">' + t.time + ' → ' + t.output + '</div>' +
+          '</div>' +
+          '<span class="task-owner jim">Jim</span>' +
+        '</div>';
       }).join('');
-      updateProgress();
+      
+      alContainer.innerHTML = alTasks.map(t => {
+        const isDone = localStorage.getItem('task_' + t.id) === 'true' || t.done;
+        return '<div class="task-item ' + (isDone ? 'completed' : '') + ' al">' +
+          '<div class="task-checkbox ' + (isDone ? 'checked' : '') + '" onclick="toggleTask(\'' + t.id + '\')"></div>' +
+          '<div>' +
+            '<div style="font-weight: 600;">' + t.title + '</div>' +
+            '<div style="color: var(--text-muted); font-size: 0.85rem;">' + t.time + ' → ' + t.output + '</div>' +
+          '</div>' +
+          '<span class="task-owner al">Al</span>' +
+        '</div>';
+      }).join('');
     }
 
     function toggleTask(id) {
       const isDone = localStorage.getItem('task_' + id) === 'true';
       localStorage.setItem('task_' + id, isDone ? 'false' : 'true');
       renderTasks();
-    }
-
-    function updateProgress() {
-      const done = tasks.filter(t => localStorage.getItem('task_' + t.id) === 'true').length;
-      const pct = Math.round((done / tasks.length) * 100);
-      document.getElementById('progress-text').textContent = done + '/' + tasks.length;
-      document.getElementById('progress-bar').style.width = pct + '%';
     }
 
     function showTab(tabId) {
@@ -4066,16 +7729,13 @@ March 5-12, 2026</p>
 
     function showDoc(docId) {
       document.querySelectorAll('.doc-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.doc-content').forEach(el => {
-        if (el.id === 'doc-' + docId) el.classList.add('active');
-      });
+      document.getElementById('doc-' + docId).classList.add('active');
       document.querySelectorAll('.doc-tab').forEach(el => el.classList.remove('active'));
       event.target.classList.add('active');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       renderTasks();
-      document.querySelector('.nav-item').click();
     });
   </script>
 </body>
