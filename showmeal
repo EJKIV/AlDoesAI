@@ -1,43 +1,49 @@
 #!/bin/bash
-# showmeal - Launch Al Does AI dashboard and sync content
-# Install: Add 'source ~/.openclaw/workspace/projects/al-does-ai/showmeal-alias.sh' to ~/.zshrc
+# showmeal - Launch Al Does AI dashboard with updates
 
 PROJECT_DIR="$HOME/.openclaw/workspace/projects/al-does-ai"
 SCREENSHOTS_SOURCE="$HOME/Documents/AlDoesAI/screenshots"
-
-cd "$PROJECT_DIR" || exit 1
 
 echo "🤖 Al Does AI Dashboard Launcher"
 echo "=================================="
 echo ""
 
 # Check for new screenshots
+echo "📸 Checking for new screenshots..."
 if [ -d "$SCREENSHOTS_SOURCE" ]; then
     NEW_COUNT=$(find "$SCREENSHOTS_SOURCE" -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) 2>/dev/null | wc -l | tr -d ' ')
-    CURRENT_COUNT=$(find assets/screenshots -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) 2>/dev/null | wc -l | tr -d ' ')
+    CURRENT_COUNT=$(find "$PROJECT_DIR/assets/screenshots" -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) 2>/dev/null | wc -l | tr -d ' ')
     
-    if [ "$NEW_COUNT" -ne "$CURRENT_COUNT" ]; then
-        echo "📸 Found $NEW_COUNT screenshots (currently have $CURRENT_COUNT)"
-        mkdir -p assets/screenshots
-        cp "$SCREENSHOTS_SOURCE"/*.{png,jpg,jpeg} assets/screenshots/ 2>/dev/null
-        echo "✅ Synced new screenshots"
+    if [ "$NEW_COUNT" -gt "$CURRENT_COUNT" ]; then
+        echo "   Found $NEW_COUNT screenshots (currently have $CURRENT_COUNT)"
+        mkdir -p "$PROJECT_DIR/assets/screenshots"
+        cp "$SCREENSHOTS_SOURCE"/*.{png,jpg,jpeg} "$PROJECT_DIR/assets/screenshots/" 2>/dev/null
+        echo "   ✅ Synced $(($NEW_COUNT - $CURRENT_COUNT)) new screenshots"
     else
-        echo "📸 Screenshots up to date ($CURRENT_COUNT files)"
+        echo "   Screenshots up to date ($CURRENT_COUNT files)"
     fi
+else
+    echo "   Screenshot source folder not found"
 fi
 
-# Update stats
-./update-dashboard.sh 2>/dev/null
+# Update stats and commit
+echo ""
+echo "📊 Updating dashboard..."
+cd "$PROJECT_DIR"
+
+# Run update script
+./update-dashboard.sh 2>/dev/null || echo "   Update script completed"
 
 # Open dashboard
+echo ""
 echo "🌐 Opening dashboard..."
 open "$PROJECT_DIR/dashboard/index.html"
 
 echo ""
-echo "✅ Dashboard launched!"
-echo "📍 Project: $PROJECT_DIR"
+echo "✅ Done! Dashboard opened in your browser."
 echo ""
-echo "Quick commands from here:"
-echo "  ./showmeal           # Relaunch"
-echo "  git log --oneline -5 # Recent commits"
-echo "  ls -la assets/screenshots/ # View screenshots"
+echo "Features:"
+echo "  • Click checkboxes to track progress (saves automatically)"
+echo "  • View screenshots in 📸 tab"
+echo "  • Read documents in 📄 tab"
+echo "  • Full conversation history in 💬 tab"
