@@ -1,0 +1,43 @@
+#!/bin/bash
+# showmeal - Launch Al Does AI dashboard and sync content
+# Install: Add 'source ~/.openclaw/workspace/projects/al-does-ai/showmeal-alias.sh' to ~/.zshrc
+
+PROJECT_DIR="$HOME/.openclaw/workspace/projects/al-does-ai"
+SCREENSHOTS_SOURCE="$HOME/Documents/AlDoesAI/screenshots"
+
+cd "$PROJECT_DIR" || exit 1
+
+echo "🤖 Al Does AI Dashboard Launcher"
+echo "=================================="
+echo ""
+
+# Check for new screenshots
+if [ -d "$SCREENSHOTS_SOURCE" ]; then
+    NEW_COUNT=$(find "$SCREENSHOTS_SOURCE" -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) 2>/dev/null | wc -l | tr -d ' ')
+    CURRENT_COUNT=$(find assets/screenshots -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) 2>/dev/null | wc -l | tr -d ' ')
+    
+    if [ "$NEW_COUNT" -ne "$CURRENT_COUNT" ]; then
+        echo "📸 Found $NEW_COUNT screenshots (currently have $CURRENT_COUNT)"
+        mkdir -p assets/screenshots
+        cp "$SCREENSHOTS_SOURCE"/*.{png,jpg,jpeg} assets/screenshots/ 2>/dev/null
+        echo "✅ Synced new screenshots"
+    else
+        echo "📸 Screenshots up to date ($CURRENT_COUNT files)"
+    fi
+fi
+
+# Update stats
+./update-dashboard.sh 2>/dev/null
+
+# Open dashboard
+echo "🌐 Opening dashboard..."
+open "$PROJECT_DIR/dashboard/index.html"
+
+echo ""
+echo "✅ Dashboard launched!"
+echo "📍 Project: $PROJECT_DIR"
+echo ""
+echo "Quick commands from here:"
+echo "  ./showmeal           # Relaunch"
+echo "  git log --oneline -5 # Recent commits"
+echo "  ls -la assets/screenshots/ # View screenshots"
