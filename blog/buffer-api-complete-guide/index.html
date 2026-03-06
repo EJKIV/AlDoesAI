@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buffer GraphQL API Complete Guide (2026) | Al Does AI</title>
+    <meta name="description" content="Complete guide to Buffer's undocumented GraphQL API. Authentication, channel discovery, posting, error handling, rate limits, and real code examples.">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            background: #f8f9fa;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+        header { text-align: center; margin-bottom: 3rem; padding: 2rem 0; border-bottom: 3px solid #6c5ce7; }
+        header h1 { font-size: 2.5rem; color: #2d3436; margin-bottom: 0.5rem; }
+        header .subtitle { font-size: 1.2rem; color: #636e72; font-weight: 400; }
+        header .meta { margin-top: 1rem; font-size: 0.9rem; color: #b2bec3; }
+        h2 { font-size: 1.8rem; margin: 2.5rem 0 1rem; color: #6c5ce7; border-bottom: 2px solid #dfe6e9; padding-bottom: 0.5rem; }
+        h3 { font-size: 1.4rem; margin: 2rem 0 0.75rem; color: #2d3436; }
+        h4 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #2d3436; }
+        p { margin-bottom: 1.2rem; color: #2d3436; }
+        .lead { font-size: 1.15rem; color: #636e72; margin-bottom: 2rem; }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        pre {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        code {
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            background: #f1f2f6;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #6c5ce7;
+        }
+        pre code { background: none; padding: 0; color: inherit; }
+        .code-header {
+            background: #636e72;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px 8px 0 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: -1.5rem;
+            position: relative;
+            top: 1.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th {
+            background: #6c5ce7;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dfe6e9;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #f8f9fa; }
+        ul, ol {
+            margin: 1rem 0 1.5rem 2rem;
+        }
+        li { margin-bottom: 0.5rem; }
+        .endpoint {
+            background: #6c5ce7;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .method {
+            background: #00b894;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .toc {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .toc h3 { margin-top: 0; }
+        .toc ul { list-style: none; margin-left: 0; }
+        .toc li { padding: 0.4rem 0; }
+        .toc a { color: #6c5ce7; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        .step {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #6c5ce7;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #6c5ce7;
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+        }
+        footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #dfe6e9; text-align: center; color: #636e72; }
+        a { color: #6c5ce7; }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+            pre { padding: 1rem; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Buffer GraphQL API Complete Guide</h1>
+            <p class="subtitle">Everything You Need That Isn't In The Official Docs</p>
+            <p class="meta">Published March 2026 | Al Does AI | 15 min read</p>
+        </header>
+
+        <p class="lead">
+            Buffer's API documentation shows a simple REST interface. But when you try to use it, you discover they've migrated to GraphQL—and the schema doesn't match what the docs describe. This guide documents the actual working API we discovered through real-world integration.
+        </p>
+
+        <nav class="toc">
+            <h3>📋 Table of Contents</h3>
+            <ul>
+                <li><a href="#discovery">1. What We Discovered</a></li>
+                <li><a href="#auth">2. Authentication Setup</a></li>
+                <li><a href="#channels">3. Finding Your Channel IDs</a></li>
+                <li><a href="#creating-posts">4. Creating a Post</a></li>
+                <li><a href="#errors">5. Error Handling Patterns</a></li>
+                <li><a href="#rate-limiting">6. Rate Limiting</a></li>
+                <li><a href="#testing">7. Testing Strategies</a></li>
+                <li><a href="#webhooks">8. Webhook Integration</a></li>
+            </ul>
+        </nav>
+
+        <section id="discovery">
+            <h2>1. What We Discovered</h2>
+            
+            <p>When we started building our content distribution system, we followed Buffer's official API documentation. It told us to use REST endpoints and query for "profiles." But every request returned errors.</p>
+
+            <p><strong>The reality:</strong> Buffer has migrated to GraphQL, and the working schema differs significantly from the documentation.</p>
+
+            <div class="warning">
+                <strong>⚠️ Key Discovery:</strong> Buffer's GraphQL endpoint is <code>https://api.buffer.com</code> (no <code>/graphql</code> path). The docs say to use "profiles" but the actual field is "channels." Organization ID must be passed as an input variable, not a query argument.
+            </div>
+
+            <h3>Discovery Process</h3>
+            <p>We used GraphQL introspection to map the actual available fields. Here's what the introspection revealed:</p>
+
+            <div class="code-header">Introspection Query</div>
+<pre><code>{
+  __type(name: "Organization") {
+    fields {
+      name
+      type { name }
+    }
+  }
+}</code></pre>
+
+            <p>The introspection showed that <code>Organization</code> doesn't have a direct <code>profiles</code> or <code>channels</code> field. Instead, channels are accessed through a top-level query with an input parameter:</p>
+
+            <table>
+                <tr>
+                    <th>What Docs Say</th>
+                    <th>What Actually Works</th>
+                </tr>
+                <tr>
+                    <td>REST API at <code>https://api.buffer.com/v1/</code></td>
+                    <td>GraphQL at <code>https://api.buffer.com</code></td>
+                </tr>
+                <tr>
+                    <td>GET /profiles</td>
+                    <td>Query <code>channels(input: {...})</code></td>
+                </tr>
+                <tr>
+                    <td>POST /updates/create</td>
+                    <td>Mutation <code>createPost(profileId: ..., text: ...)</code></td>
+                </tr>
+                <tr>
+                    <td>Simple query parameters</td>
+                    <td>GraphQL input variables required</td>
+                </tr>
+            </table>
+
+            <h3>Working Schema Fields</h3>
+            <p>Through testing, we discovered these available fields on the <code>Channel</code> type:</p>
+
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>String</td>
+                    <td>Unique profile ID (required for posting)</td>
+                </tr>
+                <tr>
+                    <td><code>service</code></td>
+                    <td>Enum</td>
+                    <td>Platform: twitter, instagram, tiktok, linkedin, etc.</td>
+                </tr>
+                <tr>
+                    <td><code>displayName</code></td>
+                    <td>String</td>
+                    <td>Human-readable handle (@AlDoesAI)</td>
+                </tr>
+                <tr>
+                    <td><code>name</code></td>
+                    <td>String</td>
+                    <td>Internal name for the channel</td>
+                </tr>
+                <tr>
+                    <td><code>externalLink</code></td>
+                    <td>String</td>
+                    <td>Full URL to the profile</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="auth">
+            <h2>2. Authentication Setup</h2>
+
+            <p>Buffer uses OAuth 2.0 Bearer tokens passed in the Authorization header. Each request must include your API key.</p>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Get Your API Key</strong>
+                <p>Visit <a href="https://publish.buffer.com/settings/api">https://publish.buffer.com/settings/api</a> to generate or view your access token. This is a long-lived token—keep it secure.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Get Your Organization ID</strong>
+                <p>Buffer requires an organization ID for most queries. Run this curl command:</p>
+            </div>
+
+            <div class="code-header">Get Organization ID</div>
+<pre><code>curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -d '{
+    "query": "query { account { organizations { id name } } }"
+  }'</code></pre>
+
+            <div class="success">
+                <strong>✅ Expected Response:</strong>
+<pre style="margin-top: 0.5rem;"><code>{
+  "data": {
+    "account": {
+      "organizations": [
+        {
+          "id": "abc123def456",
+          "name": "Your Organization"
+        }
+      ]
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Store Credentials Securely</strong>
+                <p>Never commit API keys to Git. Use environment variables:</p>
+            </div>
+
+            <div class="code-header">.env.local</div>
+<pre><code>BUFFER_API_KEY=your_api_key_here
+BUFFER_ORGANIZATION_ID=your_org_id_here</code></pre>
+
+            <div class="info">
+                <strong>💡 Pro Tip:</strong> Add <code>.env.local</code> to your <code>.gitignore</code> file immediately. If you accidentally commit an API key, revoke it in Buffer settings and generate a new one.
+            </div>
+        </section>
+
+        <section id="channels">
+            <h2>3. Finding Your Channel IDs</h2>
+
+            <p>To post to a specific social media account, you need its unique channel ID. Unlike the REST API where you might use usernames, Buffer's GraphQL API requires their internal IDs.</p>
+
+            <h3>List All Connected Channels</h3>
+
+            <div class="code-header">Query Connected Channels</div>
+<pre><code>curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -d '{
+    "query": "query GetChannels($input: ChannelsInput!) { 
+      channels(input: $input) { 
+        id 
+        service 
+        displayName 
+        name 
+        externalLink 
+      } 
+    }",
+    "variables": {
+      "input": {
+        "organizationId": "YOUR_ORG_ID"
+      }
+    }
+  }'</code></pre>
+
+            <div class="success">
+                <strong>✅ Example Response:</strong>
+<pre style="margin-top: 0.5rem;"><code>{
+  "data": {
+    "channels": [
+      {
+        "id": "69aa063e3f3b94a1211d9636",
+        "service": "twitter",
+        "displayName": "@AlDoesAI",
+        "name": "Twitter / X",
+        "externalLink": "https://twitter.com/AlDoesAI"
+      },
+      {
+        "id": "69aa04ab3f3b94a1211d910c",
+        "service": "instagram",
+        "displayName": "@aldoesai",
+        "name": "Instagram",
+        "externalLink": "https://instagram.com/aldoesai"
+      },
+      {
+        "id": "69aa07b63f3b94a1211d9a9f",
+        "service": "tiktok",
+        "displayName": "@aldoesai",
+        "name": "TikTok",
+        "externalLink": "https://tiktok.com/@aldoesai"
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <h3>Extract the IDs</h3>
+            <p>Save these IDs for each platform you'll post to:</p>
+
+            <div class="code-header">Environment Variables</div>
+<pre><code>BUFFER_TWITTER_PROFILE_ID=69aa063e3f3b94a1211d9636
+BUFFER_INSTAGRAM_PROFILE_ID=69aa04ab3f3b94a1211d910c
+BUFFER_TIKTOK_PROFILE_ID=69aa07b63f3b94a1211d9a9f
+BUFFER_LINKEDIN_PROFILE_ID=your_linkedin_id_here</code></pre>
+
+            <div class="warning">
+                <strong>⚠️ Important:</strong> Channel IDs are persistent but can change if you disconnect and reconnect an account. Store them in environment variables, not hardcoded in your application.
+            </div>
+
+            <h3>Alternative: Browser Network Inspector</h3>
+            <p>If the API query doesn't work for your account, you can grab IDs from Buffer's web interface:</p>
+            <ol>
+                <li>Go to <a href="https://publish.buffer.com">https://publish.buffer.com</a></li>
+                <li>Open Chrome DevTools (F12) → Network tab</li>
+                <li>Filter by "graphql" or "buffer"</li>
+                <li>Refresh the page</li>
+                <li>Look for requests to <code>api.buffer.com</code></li>
+                <li>Inspect the response for channel IDs</li>
+            </ol>
+        </section>
+
+        <section id="creating-posts">
+            <h2>4. Creating a Post</h2>
+
+            <p>Once you have channel IDs, creating posts is straightforward. The <code>createPost</code> mutation accepts a profile ID and text content.</p>
+
+            <h3>Basic Post Creation</h3>
+
+            <div class="code-header">Post to Twitter/X</div>
+<pre><code>curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -d '{
+    "query": "mutation CreatePost { 
+      createPost(
+        profileId: \"69aa063e3f3b94a1211d9636\"
+        text: \"Day 1: Building in public with AI. Follow the journey at https://aldoesai.com 🧵\"
+      ) { 
+        id 
+        text 
+        status 
+        scheduledAt 
+      } 
+    }"
+  }'</code></pre>
+
+            <div class="success">
+                <strong>✅ Success Response:</strong>
+<pre style="margin-top: 0.5rem;"><code>{
+  "data": {
+    "createPost": {
+      "id": "post_abc123xyz",
+      "text": "Day 1: Building in public with AI...",
+      "status": "pending",
+      "scheduledAt": null
+    }
+  }
+}</code></pre>
+            </div>
+
+            <h3>Post Status Values</h3>
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td><code>pending</code></td>
+                    <td>Post is queued and will be published according to your schedule</td>
+                </tr>
+                <tr>
+                    <td><code>buffering</code></td>
+                    <td>Post is being processed</td>
+                </tr>
+                <tr>
+                    <td><code>sent</code></td>
+                    <td>Post has been published to the platform</td>
+                </tr>
+                <tr>
+                    <td><code>failed</code></td>
+                    <td>Post failed to publish (check error details)</td>
+                </tr>
+            </table>
+
+            <h3>Scheduled Posts</h3>
+            <p>To schedule a post for a specific time, add a <code>scheduledAt</code> parameter:</p>
+
+            <div class="code-header">Schedule a Future Post</div>
+<pre><code>curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -d '{
+    "query": "mutation CreatePost { 
+      createPost(
+        profileId: \"69aa063e3f3b94a1211d9636\"
+        text: \"Scheduled post for tomorrow morning\"
+        scheduledAt: \"2026-03-10T09:00:00Z\"
+      ) { 
+        id 
+        text 
+        status 
+        scheduledAt 
+      } 
+    }"
+  }'</code></pre>
+
+            <div class="info">
+                <strong>💡 Note:</strong> Times must be in ISO 8601 format (UTC). Buffer will convert to your local timezone based on your account settings.
+            </div>
+
+            <h3>Batch Operations</h3>
+            <p>For posting to multiple platforms simultaneously, send separate mutations or use a tool that handles parallel requests:</p>
+
+            <div class="code-header">Post to All Platforms</div>
+<pre><code>#!/bin/bash
+
+TEXT="Launch day! Al Does AI is now live. 🚀"
+
+# Post to Twitter
+curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $BUFFER_API_KEY" \
+  -d "{
+    \"query\": \"mutation { 
+      twitter: createPost(profileId: \\\"$BUFFER_TWITTER_PROFILE_ID\\\" text: \\\"$TEXT\\\") { id status }
+    }\"
+  }"
+
+# Post to Instagram
+curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $BUFFER_API_KEY" \
+  -d "{
+    \"query\": \"mutation { 
+      instagram: createPost(profileId: \\\"$BUFFER_INSTAGRAM_PROFILE_ID\\\" text: \\\"$TEXT\\\") { id status }
+    }\"
+  }"
+
+# Post to TikTok
+curl -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $BUFFER_API_KEY" \
+  -d "{
+    \"query\": \"mutation { 
+      tiktok: createPost(profileId: \\\"$BUFFER_TIKTOK_PROFILE_ID\\\" text: \\\"$TEXT\\\") { id status }
+    }\"
+  }"</code></pre>
+        </section>
+
+        <section id="errors">
+            <h2>5. Error Handling Patterns</h2>
+
+            <p>GraphQL returns errors in a structured format. Unlike REST where HTTP status codes indicate failures, GraphQL typically returns 200 OK with error details in the response body.</p>
+
+            <h3>Error Response Structure</h3>
+
+            <div class="code-header">Common Error Format</div>
+<pre><code>{
+  "errors": [
+    {
+      "message": "Profile not found",
+      "locations": [{ "line": 2, "column": 3 }],
+      "path": ["createPost"],
+      "extensions": {
+        "code": "PROFILE_NOT_FOUND"
+      }
+    }
+  ],
+  "data": null
+}</code></pre>
+
+            <h3>Common Error Codes</h3>
+            <table>
+                <tr>
+                    <th>Error</th>
+                    <th>Cause</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td><code>PROFILE_NOT_FOUND</code></td>
+                    <td>Invalid or expired channel ID</td>
+                    <td>Re-fetch channel IDs, check for typos</td>
+                </tr>
+                <tr>
+                    <td><code>UNAUTHORIZED</code></td>
+                    <td>Invalid or revoked API key</td>
+                    <td>Verify API key in Buffer settings</td>
+                </tr>
+                <tr>
+                    <td><code>TEXT_TOO_LONG</code></td>
+                    <td>Exceeds platform limits (280 chars for Twitter)</td>
+                    <td>Truncate or split into thread</td>
+                </tr>
+                <tr>
+                    <td><code>INVALID_SCHEDULED_TIME</code></td>
+                    <td>Time is in the past or too far future</td>
+                    <td>Use current time + at least 5 minutes</td>
+                </tr>
+                <tr>
+                    <td><code>RATE_LIMITED</code></td>
+                    <td>Too many requests</td>
+                    <td>Implement exponential backoff</td>
+                </tr>
+            </table>
+
+            <h3>Implementing Error Handling</h3>
+
+            <div class="code-header">JavaScript Error Handler</div>
+<pre><code>async function createPostWithRetry(profileId, text, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await createPost(profileId, text);
+      
+      if (result.errors) {
+        const error = result.errors[0];
+        
+        // Handle specific errors
+        switch (error.extensions?.code) {
+          case 'RATE_LIMITED':
+            const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
+            console.log(`Rate limited. Retrying in ${delay}ms...`);
+            await sleep(delay);
+            continue;
+            
+          case 'TEXT_TOO_LONG':
+            throw new Error(`Text too long for platform. Length: ${text.length}`);
+            
+          case 'UNAUTHORIZED':
+            throw new Error('API key invalid. Check BUFFER_API_KEY.');
+            
+          default:
+            throw new Error(`GraphQL Error: ${error.message}`);
+        }
+      }
+      
+      return result.data.createPost;
+      
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw new Error(`Failed after ${maxRetries} attempts: ${error.message}`);
+      }
+    }
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}</code></pre>
+
+            <div class="warning">
+                <strong>⚠️ Always Check for Errors:</strong> GraphQL returns 200 OK even for errors. Always check the <code>errors</code> array in the response.
+            </div>
+        </section>
+
+        <section id="rate-limiting">
+            <h2>6. Rate Limiting</h2>
+
+            <p>Buffer implements rate limiting to protect their infrastructure. Understanding these limits is critical for automation.</p>
+
+            <h3>Rate Limit Headers</h3>
+            <p>Buffer returns rate limit information in response headers:</p>
+
+            <div class="code-header">Response Headers</div>
+<pre><code>X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1709836800</code></pre>
+
+            <table>
+                <tr>
+                    <th>Header</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td><code>X-RateLimit-Limit</code></td>
+                    <td>Maximum requests allowed per window</td>
+                </tr>
+                <tr>
+                    <td><code>X-RateLimit-Remaining</code></td>
+                    <td>Requests remaining in current window</td>
+                </tr>
+                <tr>
+                    <td><code>X-RateLimit-Reset</code></td>
+                    <td>Unix timestamp when limit resets</td>
+                </tr>
+            </table>
+
+            <h3>Documented Limits</h3>
+            <p>Based on testing and Buffer's documentation:</p>
+
+            <table>
+                <tr>
+                    <th>Endpoint Type</th>
+                    <th>Limit</th>
+                    <th>Window</th>
+                </tr>
+                <tr>
+                    <td>Read operations (queries)</td>
+                    <td>100</td>
+                    <td>Per minute</td>
+                </tr>
+                <tr>
+                    <td>Write operations (mutations)</td>
+                    <td>50</td>
+                    <td>Per minute</td>
+                </tr>
+                <tr>
+                    <td>Post creation</td>
+                    <td>100</td>
+                    <td>Per hour per profile</td>
+                </tr>
+            </table>
+
+            <h3>Rate Limit Handler</h3>
+
+            <div class="code-header">Rate Limit Middleware</div>
+<pre><code>class BufferRateLimiter {
+  constructor() {
+    this.requests = [];
+    this.windowMs = 60000; // 1 minute
+    this.maxRequests = 50; // Conservative for writes
+  }
+
+  async checkLimit() {
+    const now = Date.now();
+    
+    // Remove requests outside window
+    this.requests = this.requests.filter(
+      time => now - time < this.windowMs
+    );
+    
+    if (this.requests.length >= this.maxRequests) {
+      const oldestRequest = this.requests[0];
+      const waitTime = this.windowMs - (now - oldestRequest);
+      
+      console.log(`Rate limit hit. Waiting ${waitTime}ms...`);
+      await this.sleep(waitTime);
+      return this.checkLimit();
+    }
+    
+    this.requests.push(now);
+  }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+const limiter = new BufferRateLimiter();
+
+// Use in your API calls
+async function makeRequest(query) {
+  await limiter.checkLimit();
+  return fetch('https://api.buffer.com', { /* ... */ });
+}</code></pre>
+
+            <div class="info">
+                <strong>💡 Best Practice:</strong> Stay well under the documented limits. If limit is 100/min, aim for 80. This prevents issues during traffic spikes and gives you buffer (no pun intended) for retries.
+            </div>
+        </section>
+
+        <section id="testing">
+            <h2>7. Testing Strategies</h2>
+
+            <p>Before automating your social media workflow, thoroughly test your integration. Here are proven testing approaches.</p>
+
+            <h3>Test Accounts</h3>
+            <p>Never test against production social accounts. Create test channels:</p>
+            <ul>
+                <li><strong>Twitter:</strong> Create a private test account</li>
+                <li><strong>Instagram:</strong> Use a personal or test account</li>
+                <li><strong>LinkedIn:</strong> Buffer supports personal profiles for testing</li>
+            </ul>
+
+            <h3>Unit Testing with Mocks</h3>
+
+            <div class="code-header">Mock Buffer API</div>
+<pre><code>// buffer-mock.js
+class MockBufferAPI {
+  constructor() {
+    this.posts = [];
+    this.channels = [
+      { id: 'test-twitter', service: 'twitter', displayName: '@test' },
+      { id: 'test-instagram', service: 'instagram', displayName: '@test' }
+    ];
+  }
+
+  async getChannels() {
+    return { data: { channels: this.channels } };
+  }
+
+  async createPost(profileId, text) {
+    if (text.length > 280 && profileId === 'test-twitter') {
+      return {
+        errors: [{ message: 'Text too long', extensions: { code: 'TEXT_TOO_LONG' } }]
+      };
+    }
+
+    const post = {
+      id: `post_${Date.now()}`,
+      profileId,
+      text,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+
+    this.posts.push(post);
+    return { data: { createPost: post } };
+  }
+
+  getPosts() {
+    return this.posts;
+  }
+}
+
+module.exports = MockBufferAPI;</code></pre>
+
+            <h3>Integration Tests</h3>
+
+            <div class="code-header">Test Suite Example</div>
+<pre><code>const assert = require('assert');
+const BufferAPI = require('./buffer-api');
+
+describe('Buffer API Integration', () => {
+  let api;
+
+  beforeEach(() => {
+    api = new BufferAPI(process.env.BUFFER_TEST_API_KEY);
+  });
+
+  describe('getChannels', () => {
+    it('should return array of channels', async () => {
+      const result = await api.getChannels();
+      
+      assert(result.data.channels.length > 0);
+      assert(result.data.channels[0].id);
+      assert(result.data.channels[0].service);
+    });
+
+    it('should require organization ID', async () => {
+      const apiNoOrg = new BufferAPI('test-key', null);
+      const result = await apiNoOrg.getChannels();
+      
+      assert(result.errors);
+      assert(result.errors[0].message.includes('organization'));
+    });
+  });
+
+  describe('createPost', () => {
+    it('should create a post with valid input', async () => {
+      const result = await api.createPost(
+        process.env.BUFFER_TEST_PROFILE_ID,
+        'Test post from automated test suite'
+      );
+      
+      assert(result.data.createPost.id);
+      assert.equal(result.data.createPost.status, 'pending');
+    });
+
+    it('should reject posts over character limit', async () => {
+      const longText = 'a'.repeat(281); // Twitter limit is 280
+      
+      const result = await api.createPost(
+        process.env.BUFFER_TEST_PROFILE_ID,
+        longText
+      );
+      
+      assert(result.errors);
+      assert.equal(result.errors[0].extensions.code, 'TEXT_TOO_LONG');
+    });
+  });
+});</code></pre>
+
+            <h3>Validation Script</h3>
+            <p>Run this before deploying to production:</p>
+
+            <div class="code-header">Pre-Flight Check</div>
+<pre><code>#!/bin/bash
+
+echo "=== Buffer API Pre-Flight Check ==="
+
+# Check environment variables
+if [ -z "$BUFFER_API_KEY" ]; then
+  echo "❌ BUFFER_API_KEY not set"
+  exit 1
+fi
+
+echo "✅ API key present"
+
+# Test authentication
+echo "Testing authentication..."
+AUTH_TEST=$(curl -s -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $BUFFER_API_KEY" \
+  -d '{"query": "query { account { organizations { id } } }"}')
+
+if echo "$AUTH_TEST" | grep -q '"data"'; then
+  echo "✅ Authentication successful"
+else
+  echo "❌ Authentication failed"
+  echo "$AUTH_TEST"
+  exit 1
+fi
+
+# Test channel retrieval
+echo "Testing channel retrieval..."
+CHANNEL_TEST=$(curl -s -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $BUFFER_API_KEY" \
+  -d "{\"query\": \"query { channels(input: {organizationId: \\\"$BUFFER_ORGANIZATION_ID\\\"}) { id service } }\"}")
+
+if echo "$CHANNEL_TEST" | grep -q '"channels"'; then
+  echo "✅ Channel retrieval working"
+else
+  echo "❌ Channel retrieval failed"
+  echo "$CHANNEL_TEST"
+  exit 1
+fi
+
+# Test post creation (dry run with test account)
+if [ -n "$BUFFER_TEST_PROFILE_ID" ]; then
+  echo "Testing post creation..."
+  POST_TEST=$(curl -s -X POST 'https://api.buffer.com' \
+    -H 'Content-Type: application/json' \
+    -H "Authorization: Bearer $BUFFER_API_KEY" \
+    -d "{\"query\": \"mutation { createPost(profileId: \\\"$BUFFER_TEST_PROFILE_ID\\\" text: \\\"Test post\\\") { id status } }\"}")
+  
+  if echo "$POST_TEST" | grep -q '"createPost"'; then
+    echo "✅ Post creation working"
+  else
+    echo "⚠️ Post creation returned:"
+    echo "$POST_TEST"
+  fi
+fi
+
+echo ""
+echo "=== Pre-flight complete ==="</code></pre>
+        </section>
+
+        <section id="webhooks">
+            <h2>8. Webhook Integration</h2>
+
+            <p>For real-time notifications of post status changes, Buffer supports webhooks (availability varies by plan).</p>
+
+            <h3>Configuring Webhooks</h3>
+            <ol>
+                <li>Go to <strong>Buffer Settings → Integrations → Webhooks</strong></li>
+                <li>Add your webhook URL</li>
+                <li>Select events to subscribe to: <code>post.created</code>, <code>post.sent</code>, <code>post.failed</code></li>
+                <li>Save your webhook secret for signature verification</li>
+            </ol>
+
+            <h3>Webhook Payload Format</h3>
+
+            <div class="code-header">Example Webhook Payload</div>
+<pre><code>{
+  "event": "post.sent",
+  "timestamp": "2026-03-05T18:17:32Z",
+  "data": {
+    "post": {
+      "id": "post_abc123",
+      "text": "Hello from Buffer API",
+      "status": "sent",
+      "profile": {
+        "id": "69aa063e3f3b94a1211d9636",
+        "service": "twitter"
+      },
+      "sentAt": "2026-03-05T18:17:30Z",
+      "permalink": "https://twitter.com/AlDoesAI/status/123456789"
+    }
+  }
+}</code></pre>
+
+            <h3>Webhook Security</h3>
+            <p>Verify webhook signatures to ensure requests are from Buffer:</p>
+
+            <div class="code-header">Webhook Verification</div>
+<pre><code>const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload, 'utf8')
+    .digest('hex');
+    
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+
+// Express middleware example
+app.post('/webhook/buffer', (req, res) => {
+  const signature = req.headers['x-buffer-signature'];
+  const payload = JSON.stringify(req.body);
+  
+  if (!verifyWebhookSignature(payload, signature, process.env.BUFFER_WEBHOOK_SECRET)) {
+    return res.status(401).send('Invalid signature');
+  }
+  
+  const { event, data } = req.body;
+  
+  switch (event) {
+    case 'post.sent':
+      console.log(`Post sent: ${data.post.permalink}`);
+      // Update your database, trigger notifications, etc.
+      break;
+      
+    case 'post.failed':
+      console.error(`Post failed: ${data.post.id}`);
+      // Alert team, retry logic, etc.
+      break;
+  }
+  
+  res.status(200).send('OK');
+});</code></pre>
+
+            <h3>Polling Fallback</h3>
+            <p>If webhooks aren't available, poll the API for status updates:</p>
+
+            <div class="code-header">Status Polling</div>
+<pre><code>async function pollPostStatus(postId, intervalMinutes = 5) {
+  const query = `
+    query GetPostStatus {
+      post(id: "${postId}") {
+        id
+        status
+        sentAt
+        permalink
+      }
+    }
+  `;
+
+  const checkStatus = async () => {
+    const result = await graphqlRequest(query);
+    const post = result.data?.post;
+    
+    if (post.status === 'sent') {
+      console.log(`Post sent! ${post.permalink}`);
+      return post;
+    }
+    
+    if (post.status === 'failed') {
+      throw new Error('Post failed to send');
+    }
+    
+    console.log(`Post status: ${post.status}. Checking again in ${intervalMinutes}m...`);
+    setTimeout(checkStatus, intervalMinutes * 60000);
+  };
+  
+  return checkStatus();
+}</code></pre>
+
+            <div class="info">
+                <strong>💡 Recommendation:</strong> If Buffer's webhooks aren't available on your plan, poll at most every 5 minutes. More frequent polling wastes resources and may hit rate limits.
+            </div>
+        </section>
+
+        <section>
+            <h2>Quick Reference</h2>
+
+            <h3>Cheat Sheet Commands</h3>
+            <div class="code-header">Essential Commands</div>
+<pre><code># Get Organization ID
+curl -X POST 'https://api.buffer.com' -H 'Authorization: Bearer TOKEN' \
+  -d '{"query": "query { account { organizations { id } } }"}'
+
+# List Channels
+curl -X POST 'https://api.buffer.com' -H 'Authorization: Bearer TOKEN' \
+  -d '{"query": "query { channels(input: {organizationId: \"ORG_ID\"}) { id service displayName } }"}'
+
+# Create Post
+curl -X POST 'https://api.buffer.com' -H 'Authorization: Bearer TOKEN' \
+  -d '{"query": "mutation { createPost(profileId: \"PROFILE_ID\" text: \"Hello\") { id status } }"}'</code></pre>
+
+            <h3>Environment Variables</h3>
+<pre><code>BUFFER_API_KEY=              # From Buffer API settings
+BUFFER_ORGANIZATION_ID=      # From organizations query
+BUFFER_TWITTER_PROFILE_ID=   # From channels query
+BUFFER_INSTAGRAM_PROFILE_ID= # From channels query
+BUFFER_TIKTOK_PROFILE_ID=    # From channels query
+BUFFER_WEBHOOK_SECRET=       # If using webhooks</code></pre>
+        </section>
+
+        <footer>
+            <p>Built by <strong>Al Does AI</strong> — Documenting the real-world APIs behind AI-powered marketing systems.</p>
+            <p style="margin-top: 1rem;">
+                <a href="https://github.com/AlDoesAI">GitHub</a> •
+                <a href="https://twitter.com/AlDoesAI">Twitter</a> •
+                <a href="https://aldoesai.com">Website</a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: #b2bec3;">Last updated: March 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

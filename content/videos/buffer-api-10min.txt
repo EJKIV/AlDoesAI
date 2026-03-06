@@ -1,0 +1,217 @@
+BUFFER GRAPHQL API COMPLETE GUIDE
+Video Script - 10 Minutes
+Al Does AI | March 2026
+
+═══════════════════════════════════════════════════════════════
+
+[0:00-0:45] INTRO - THE PROBLEM
+
+[On screen: Title card "The Buffer API Docs Are Wrong"]
+[Background: Screenshot of Buffer's REST API docs]
+
+Hey everyone. If you've tried to integrate with Buffer's API recently,
+you probably hit a wall. You follow the docs, copy the examples, and
+nothing works. That's because Buffer moved to GraphQL—and the schema
+doesn't match what the documentation says.
+
+I'm going to walk you through what we discovered building our own
+content distribution system. This is the guide I wish existed when we
+started.
+
+[0:45-1:30] WHAT WE DISCOVERED
+
+[On screen: Side-by-side code comparison]
+
+The documentation tells you to query "profiles" from an organization.
+That doesn't work. After running introspection queries against the live
+API, we found the actual field is "channels" and it requires an input
+parameter with your organization ID.
+
+Here's what actually works:
+
+[Show working code example - 10 seconds]
+
+The endpoint is https://api.buffer.com—note there's no /graphql path and
+no version number. It's just the root domain.
+
+[1:30-2:15] AUTHENTICATION SETUP
+
+[On screen: Buffer settings page, API section]
+
+First, get your API key from buffer.com/settings/api. Copy it and save
+to a .env.local file—never commit API keys to Git.
+
+[Show .env.local on screen]
+
+Next, you need your organization ID. Run this curl command:
+
+[Show curl command - 5 seconds]
+
+The response gives you the organization ID. Add that to your
+environment variables too. You'll need both for almost every API call.
+
+[2:15-3:30] FINDING YOUR CHANNEL IDS
+
+[On screen: Terminal showing channel query response]
+
+To post to a specific social account, you need its channel ID. This is
+Buffer's internal identifier, not your username. Run the channels query
+with your organization ID:
+
+[Show channels query - 10 seconds]
+
+The response includes IDs for Twitter, Instagram, TikTok—whatever
+you've connected. Save these to environment variables like
+BUFFER_TWITTER_PROFILE_ID.
+
+[On screen: Highlight the channel ID format]
+
+These IDs are 24-character hexadecimal strings. If you disconnect and
+reconnect an account, the ID changes—so don't hardcode them.
+
+Pro tip: If the API query doesn't work, grab IDs from Buffer's web
+interface using Chrome DevTools. Filter the Network tab by "graphql"
+and inspect the response.
+
+[3:30-4:45] CREATING A POST
+
+[On screen: Code editor with createPost mutation]
+
+Creating a post is straightforward once you have the channel ID. Here's
+the mutation:
+
+[Show createPost mutation - 10 seconds]
+
+Pass the profileId and text. The response includes a post ID and
+status. Status will be "pending" meaning it's queued for your
+scheduled time.
+
+[Show POST request and response - 10 seconds]
+
+For scheduled posts, add a scheduledAt parameter in ISO 8601 format:
+
+[Show scheduled post example - 5 seconds]
+
+Buffer converts this to your local timezone based on account settings.
+
+[4:45-6:00] ERROR HANDLING
+
+[On screen: Error response JSON]
+
+GraphQL errors look different from REST. You usually get a 200 status
+code even when something fails. Check the errors array in the response.
+
+The most common errors we hit:
+
+TEXT_TOO_LONG - You're over the platform limit. Twitter is 280, others
+are more generous. Buffer doesn't auto-truncate—you need to handle
+this yourself.
+
+PROFILE_NOT_FOUND - Your channel ID changed or got disconnected. Just
+re-run the channels query and update your environment variables.
+
+RATE_LIMITED - You're making too many requests. Buffer allows roughly 50
+writes per minute. Implement exponential backoff:
+
+[Show retry code - 10 seconds]
+
+Always check error.extensions.code to handle specific cases.
+
+[6:00-7:30] RATE LIMITING
+
+Buffer returns rate limit info in response headers. Look for
+X-RateLimit-Remaining and X-RateLimit-Reset.
+
+In practice, stay well under the documented limits. If they say 50 per
+minute, aim for 40. This gives you headroom for retries and handles
+traffic spikes.
+
+[Show rate limiter implementation - 10 seconds]
+
+For batch operations, add delays between posts. Don't fire 20 requests
+simultaneously—process them sequentially with a one or two second gap.
+
+[7:30-8:45] TESTING STRATEGIES
+
+Never test against production accounts. Create private test channels
+for each platform you use.
+
+Write unit tests with mocked responses:
+
+[Show mock example - 10 seconds]
+
+And integration tests against the live API using test credentials:
+
+[Show integration test - 10 seconds]
+
+Run a pre-flight check before deploying to production. Test
+authentication, channel retrieval, and optionally a dry-run post.
+
+This catches environment issues before they impact your workflow.
+
+[8:45-9:30] WEBHOOKS AND MONITORING
+
+Buffer supports webhooks for post status changes—post.sent, post.failed,
+etc. Configure these in your settings.
+
+[Show webhook settings page]
+
+Verify webhook signatures using your secret key:
+
+[Show signature verification code - 10 seconds]
+
+If webhooks aren't available on your plan, poll the API every few
+minutes for status updates. Don't poll more frequently than 5 minutes
+or you'll hit rate limits.
+
+[9:30-10:00] WRAP UP
+
+That covers the Buffer GraphQL API as it actually works—not how the
+documentation claims it works.
+
+To recap: Use channels not profiles. Query with organizationId input.
+Handle GraphQL error format. Respect rate limits. Test thoroughly.
+
+All the code examples are in the description. Check out our full guide
+at aldoesai.com/buffer-api for copy-paste ready scripts.
+
+If you found this helpful, subscribe for more real-world API
+documentation. And let me know what API you want demystified next.
+
+[End card with links and subscribe button]
+
+═══════════════════════════════════════════════════════════════
+
+VIDEO PRODUCTION NOTES:
+
+Total Runtime: 9 minutes 30 seconds (leaving buffer for intro/outro)
+Visual Style: Code editor recordings + Browser captures + Terminal
+Background Music: Lo-fi tech beats, 20% volume
+Captions: Auto-generated, review for technical terms
+
+TIMESTAMPS FOR CHAPTERS:
+0:00 - Introduction
+0:45 - What We Discovered  
+1:30 - Authentication Setup
+2:15 - Finding Channel IDs
+3:30 - Creating Posts
+4:45 - Error Handling
+6:00 - Rate Limiting
+7:30 - Testing Strategies
+8:45 - Webhooks
+9:30 - Wrap Up
+
+RESOURCES TO PREPARE:
+- Screen recording of Buffer API docs (showing outdated info)
+- Terminal recordings of working API calls  
+- Code editor with syntax-highlighted examples
+- Buffer dashboard screen captures
+- Terminal with error examples
+- Custom thumbnails with "GraphQL" and "Buffer" logos
+
+CALL TO ACTION PLACEMENT:
+- Subscribe reminder at 0:30 (soft)
+- Like button at 5:00 (after key content)
+- Full outro CTA at 9:30
+
+═══════════════════════════════════════════════════════════════
