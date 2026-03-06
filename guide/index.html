@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Does AI — Guide</title>
+    <style>
+        :root {
+            --warm-paper: #f7f4ef;
+            --warm-paper-dark: #e8e4dd;
+            --text-primary: #2a2a2a;
+            --text-secondary: #5a5a5a;
+            --accent: #d4a574;
+            --code-bg: #f0ede7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--warm-paper);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--warm-paper-dark);
+        }
+        
+        h1 {
+            font-family: Georgia, serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .nav a:hover {
+            background: var(--warm-paper-dark);
+        }
+        
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .guide-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .guide-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .guide-card h3 {
+            font-family: Georgia, serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .guide-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .guide-card .meta {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .category {
+            margin-bottom: 2rem;
+        }
+        
+        .category h2 {
+            font-family: Georgia, serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--warm-paper-dark);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .generated-at {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 The Guide</h1>
+            <p class="subtitle">Documentation, workflows, and how-to guides for the Al Does AI project</p>
+        </header>
+        
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/journal/">Journal</a>
+            <a href="/guide/">Guide</a>
+            <a href="https://github.com/yourusername/al-does-ai">GitHub</a>
+        </nav>
+        
+        <h2 style="margin-bottom: 1.5rem; font-family: Georgia, serif;">Documentation</h2>
+        <div class="guide-grid">
+            <a href="docs/30_DAY_PLAN.md" class="guide-card">
+                <h3>30-Day Plan — Al Does AI</h3>
+                <p>**Mission:** Launch the content machine. Document every step. Build in public....</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/AGENT_SKILLS_CONTENT_DISTRIBUTION.md" class="guide-card">
+                <h3>Agent Skills — Content Distribution Architecture</h3>
+                <p>**Version:** 1.0  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/AGENT_TEAM_ROSTER.md" class="guide-card">
+                <h3>Agent Team Roster — Al Does AI</h3>
+                <p>**The machine that builds the content.**...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/AUTOMATION_WORKFLOWS.md" class="guide-card">
+                <h3>Automation Workflows — Al Does AI</h3>
+                <p>**Version:** 1.0  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/BUFFER_API_COMPLETE.md" class="guide-card">
+                <h3>Buffer GraphQL API — Setup Complete ✅</h3>
+                <p>**Status:** Fully operational  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/BUFFER_API_SETUP.md" class="guide-card">
+                <h3>Buffer API Setup Guide — Updated March 2026</h3>
+                <p>**⚠️ Current Situation:** Buffer is transitioning to a new API. Documentation may be in flux....</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/BUFFER_CHANNEL_LOOKUP.md" class="guide-card">
+                <h3>Buffer Channel Lookup — Alternative Methods</h3>
+                <p>Since the GraphQL schema might use different field names, try these:...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/BUFFER_GRAPHQL_SETUP.md" class="guide-card">
+                <h3>Buffer GraphQL API — Complete Setup</h3>
+                <p>**Status:** ✅ Org ID confirmed working  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/COMPREHENSIVE_DIGITAL_REAL_ESTATE.md" class="guide-card">
+                <h3>COMPREHENSIVE Digital Real Estate Acquisition Plan</h3>
+                <p>**Project:** Al Does AI  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/CONTENT_CALENDAR.md" class="guide-card">
+                <h3>Content Calendar — Al Does AI</h3>
+                <p>**Daily, weekly, and monthly content schedule with templates.**...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/CONTENT_TEMPLATES.md" class="guide-card">
+                <h3>Al Does AI — Content Templates</h3>
+                <p>**Standard formats for each platform.**...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/CONVERSATION_LOGGING_SYSTEM.md" class="guide-card">
+                <h3>Conversation Logging System</h3>
+                <p>**Purpose:** Capture every prompt and response for:...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/CRON_SETUP.md" class="guide-card">
+                <h3>Cron Setup for Al Does AI</h3>
+                <p>This document explains how to configure automated daily updates for the Al Does AI project using macOS `cron`....</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/DIGITAL_REAL_ESTATE_PLAN.md" class="guide-card">
+                <h3>Digital Real Estate Procurement Plan</h3>
+                <p>**Project:** Al Does AI  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/HANDLE_AVAILABILITY_STATUS.md" class="guide-card">
+                <h3>Handle Availability Status</h3>
+                <p>**Research Date:** March 5, 2026  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/NAMED_AGENTS_SPEC.md" class="guide-card">
+                <h3>Named Agents Specification — Al Does AI</h3>
+                <p>**Version:** 1.0  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/RESEARCH_TOPICS.md" class="guide-card">
+                <h3>Research Topics — Active Queue</h3>
+                <p>**What we're tracking. Why. How we use it.**...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/SECURITY_GITIGNORE.md" class="guide-card">
+                <h3>Security: .gitignore Changes</h3>
+                <p>**Date:** March 5, 2026  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+            <a href="docs/TEMPLATE.md" class="guide-card">
+                <h3>Conversation Template</h3>
+                <p>**Date:** YYYY-MM-DD  ...</p>
+                <div class="meta">2026-03-05</div>
+            </a>
+        </div>
+        
+        <div class="category">
+            <h2>Quick Links</h2>
+            <div class="guide-grid">
+                <a href="https://github.com/yourusername/al-does-ai" class="guide-card">
+                    <h3>🐙 GitHub Repository</h3>
+                    <p>Source code, issues, and pull requests</p>
+                    <div class="meta">External</div>
+                </a>
+                <a href="/dashboard/" class="guide-card">
+                    <h3>📊 Dashboard</h3>
+                    <p>Project status and progress tracking</p>
+                    <div class="meta">Local</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="generated-at">Last updated: 2026-03-05 19:37:07 EST</div>
+        
+        <footer>
+            <p>Built with 🔥 by Al • Every prompt published • Every action documented</p>
+        </footer>
+    </div>
+</body>
+</html>
