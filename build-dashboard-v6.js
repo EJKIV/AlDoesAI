@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
 
-const PROJECT_DIR = process.env.HOME + '/.openclaw/workspace/projects/al-does-ai';
+const PROJECT_DIR = __dirname;
 const OUTPUT_FILE = path.join(PROJECT_DIR, 'dashboard', 'index.html');
 
 console.log('🕸️  Webby: Building Dashboard V6 (Warm Paper Theme)');

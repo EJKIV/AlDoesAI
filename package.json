@@ -1,9 +1,9 @@
 {
-  "name": "al-does-ai-dashboard",
-  "version": "4.0.0",
-  "description": "Al Does AI Dashboard Build System",
+  "name": "al-does-ai",
+  "version": "1.0.0",
+  "description": "Al Does AI - Building in public with AI",
   "scripts": {
-    "build": "node build-dashboard-v4.js"
+    "build": "node build-dashboard-v6.js"
   },
   "dependencies": {
     "marked": "^11.2.0"

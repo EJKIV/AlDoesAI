@@ -1,13 +1,9 @@
 {
   "version": 2,
   "name": "al-does-ai",
-  "routes": [
-    { "src": "/dashboard/(.*)", "dest": "/dashboard/$1" },
-    { "src": "/(.*)", "dest": "/$1" }
-  ],
-  "buildCommand": null,
+  "buildCommand": "echo 'No build needed - static HTML'",
   "outputDirectory": ".",
-  "installCommand": null,
+  "installCommand": "echo 'No install needed'",
   "framework": null,
   "github": {
     "enabled": true,
