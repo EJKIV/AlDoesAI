@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Al Does AI</title>
+  <meta name="description" content="A 180-day public experiment in building an AI-powered business from zero. Every day documented, every action tracked.">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Blog — Al Does AI">
+  <meta property="og:description" content="A 180-day public experiment in building an AI-powered business from zero.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aldoesai.com/blog/">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #f7f4ef;
+      --bg-elevated: #eeeae3;
+      --bg-card: #faf8f4;
+      --text: #1a1814;
+      --text-muted: #3a3830;
+      --primary: #1e4a7a;
+      --accent: #b03e10;
+      --border: #c8c3ba;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Fraunces', serif;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 32px 100px;
+    }
+
+    /* ── MASTHEAD ── */
+    .masthead {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 60px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+    .logo a { color: var(--text-muted); text-decoration: none; }
+    .logo a:hover { color: var(--primary); }
+    .logo span { color: var(--accent); font-weight: 600; }
+
+    /* ── HEADER ── */
+    .page-header {
+      margin-bottom: 64px;
+    }
+
+    h1 {
+      font-size: clamp(48px, 8vw, 72px);
+      font-weight: 300;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: 19px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-muted);
+      max-width: 540px;
+    }
+
+    /* ── POSTS LIST ── */
+    .posts-list {
+      margin-top: 48px;
+    }
+
+    .post-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 32px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+    }
+
+    .post-item:hover {
+      background: var(--bg-card);
+      margin: 0 -32px;
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+
+    .post-item:first-child {
+      border-top: 1px solid var(--border);
+    }
+
+    .post-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      line-height: 1.5;
+    }
+
+    .post-day {
+      display: block;
+      color: var(--accent);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .post-content {
+      flex: 1;
+    }
+
+    .post-title {
+      font-size: 24px;
+      font-weight: 300;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .post-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .post-excerpt {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-bottom: 16px;
+    }
+
+    .post-meta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .post-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-muted);
+    }
+
+    .post-tag.featured {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .post-read-time {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-muted);
+    }
+
+    .empty-state p {
+      font-size: 16px;
+      font-style: italic;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      margin: 40px 0;
+    }
+    .nav a {
+      display: inline-block;
+      margin-right: 24px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-family: 'DM Mono', monospace;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
+      transition: border-color 0.2s;
+    }
+    .nav a:hover { border-bottom-color: var(--primary); }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 80px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-handle {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .footer-handle span { color: var(--accent); }
+
+    /* ── NEWSLETTER SECTION ── */
+    .newsletter-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin: 64px 0;
+    }
+
+    .newsletter-title {
+      font-size: 20px;
+      font-weight: 300;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .newsletter-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+
+    .newsletter-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--primary);
+      padding-bottom: 2px;
+    }
+    .newsletter-link:hover {
+      opacity: 0.7;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 20px 60px; }
+      h1 { font-size: 42px; }
+      .post-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .post-item:hover {
+        margin: 0 -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="masthead">
+      <div class="logo"><a href="../"><span>Al</span> Does AI</a></div>
+    </div>
+
+    <div class="nav">
+      <a href="../">← Home</a>
+      <a href="../dashboard/">Dashboard →</a>
+      <a href="../guide/">Guide →</a>
+      <a href="../journal/">Journal →</a>
+    </div>
+
+    <div class="page-header">
+      <h1>The <em>Blog</em></h1>
+      <p class="subtitle">
+        Longer essays, deep dives, and the thinking behind the builds. The journal captures the day-to-day; the blog captures the patterns.
+      </p>
+    </div>
+
+    <div class="posts-list">
+
+      <a href="./you-can-speak-it-into-existence/" class="post-item">
+        <div class="post-date">
+          <span class="post-day">Day 001</span>
+          Mar 5, 2026
+        </div>
+        <div class="post-content">
+          <h2 class="post-title">You Can <em>Speak It</em> Into Existence</h2>
+          <p class="post-excerpt">
+            The gap between idea and output has collapsed. Most people don't know how close they are. This is a 180-day public experiment in building an AI-powered business from zero — every prompt, every action, every dollar tracked.
+          </p>
+          <div class="post-meta">
+            <span class="post-tag featured">Launch</span>
+            <span class="post-tag">Transparency</span>
+            <span class="post-read-time">12 min read</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Additional posts will be added here as they're written -->
+
+    </div>
+
+    <div class="newsletter-section">
+      <h3 class="newsletter-title">Follow the experiment</h3>
+      <p class="newsletter-desc">
+        New posts. Daily updates. Code. Prompts. Everything.
+      </p>
+      <a href="https://twitter.com/AlDoesAI" target="_blank" class="newsletter-link">→ @AlDoesAI on Twitter</a>
+    </div>
+
+    <div class="footer">
+      <div class="footer-handle"><span>@AlDoesAI</span> — Building in public</div>
+    </div>
+
+  </div>
+</body>
+</html>
